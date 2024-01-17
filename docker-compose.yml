@@ -1,0 +1,12 @@
+version: "3.2"
+services:
+  brain:
+    container_name: brain
+    build: './YTACM-BRAIN/'
+    volumes:
+      - ./YTACM-BRAIN/app:/brain
+      - ./shared:/shared
+      - brainroot:/root
+
+volumes:
+  brainroot:
