@@ -34,7 +34,7 @@ for idR = 1:size(fieldTypes,1)
       img = imgS(imgBounds(1):imgBounds(2), imgBounds(3):imgBounds(4));
 
       symbolLibIdx = sub_find_symbols(img, symbolLib);
-      x = sprintf( "%d,%d, %s", idR, idC, symbolNames( symbolLibIdx ) );
+      x = sprintf( "%d,%d:%s", idR, idC, symbolNames( symbolLibIdx ) );
       symbolsAtPositions = [symbolsAtPositions;x];
 
     endif

@@ -20,7 +20,7 @@ for idR = 1:length(varRowIdx)
       B = (1 - (I < I(1)-10)) .* 255; % Remove shadow noise by binarization, assuming dark letter on brighter bg
 
       sIds = sub_find_symbols(B, symbolLib(1:10));
-      variables_with_pos = [variables_with_pos; sprintf("%d, %d, %s", idR, idC, symbolNames(sIds))];
+      variables_with_pos = [variables_with_pos; sprintf("%d,%d:%s", idR, idC, symbolNames(sIds))];
     endif
   end
 end
