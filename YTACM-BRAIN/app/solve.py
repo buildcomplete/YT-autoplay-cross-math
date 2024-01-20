@@ -87,7 +87,7 @@ class GameState:
                 currentEquation =  currentEquation+ S.getSymbol(r,c)
             elif T.isInput(r,c):
                 i+=1
-                currentEquation = currentEquation + '_'
+                currentEquation = currentEquation + str.format('_{},{}_', r,c)
                 currentEquationVariables.add((r,c))
                 self.inputOptions.add((r,c))
             elif i>1:
@@ -122,18 +122,91 @@ class GameState:
                     
 gameState = GameState('/shared/cross-math-scan-result.txt')
 #gameState.PrintEquations()
-print("equations=")
-print(gameState.equations)
+# print("equations=")
+# print(gameState.equations)
 
-print("inputOptions=")
-print(gameState.inputOptions)
+# print("inputOptions=")
+# print(gameState.inputOptions)
 
-print("equations pr input=")
+# print("inputs to solve an equation from set")
+equationsPrOption = {}
 for opt in gameState.inputOptions:
     eqFound = []
     for eqWithOpts in gameState.equations:
         if (opt in eqWithOpts[1]):
             eqFound.append(eqWithOpts[0])
-    print(opt)
-    print(eqFound)
-    print(min(map(lambda x:x.count('_'), eqFound)))
+    equationsPrOption[opt] = {
+        'eq':eqFound, 
+        'complexity': (min(map(lambda x:x.count('_')/2, eqFound)))}
+#equationsPrOptions
+
+def solve(_options, _equationsToOptionMap, _variablesWithPos , _action = None ):
+    # Test if the move we just made is good
+    # _action should somehow represent setting a specific variable to a target
+    # if the move is valid, update the equationsMap and continue if the are move variables
+    # if not, return false
+    
+    if _action == None:
+        newOptionMap = _equationsToOptionMap
+        newVariablesWithPos = _variablesWithPos
+    else:
+        target = _action['target']
+        eqToUpdate = _equationsToOptionMap[target]
+
+        tRow, tCol = target
+
+        def updateEquation(eq: str):
+            return eq.replace(str.format('_{},{}_', tRow, tCol), _action['value'])
+
+        # map(lambda eq: eq.replace('_{},{}_', _action['target']), _equationsToUpdate
+        updatedEquations = list(map(updateEquation, eqToUpdate['eq']))
+
+        def equationCouldBeValid(eq: str):
+            # If there is no more symbols to replace, the equation can be evaluated
+            if eq.count('_') == 0:
+                    return eval(eq.replace('=', '=='))
+            # Otherwhise, if there is more stuff possible to replace, the equation might be possible to solve still
+            return True 
+            
+        validMove = reduce(lambda a,b: b and equationCouldBeValid(a), updatedEquations )
+        if not validMove:
+            return False
+        
+        # Move was valid with local reference, loop over all equations and update
+        oldCopy = _equationsToOptionMap
+        
+        newOptionMap={}
+        for k, v in oldCopy.items():
+            updatedEquations2 = list(map(updateEquation, v['eq']))
+            v['eq']=updatedEquations2
+            newOptionMap[k]=v
+        print(_variablesWithPos)
+        newVariablesWithPos = _variablesWithPos.copy()
+        del newVariablesWithPos[_action['from']]
+            
+    if len(_options)==0:
+        print ("solution found")
+        return True
+    
+    inputOptions = sorted(_options, key=lambda x:newOptionMap[x]['complexity'] - 0.1*len(newOptionMap[x]['eq']) )
+    # Take the next option with lowest complexity
+    # loop over all variables, and test, until solve return true
+    
+    opt = inputOptions.pop(0)
+    # Find equations where this option is present
+    print(_equationsToOptionMap[opt]['eq'])
+    print(newVariablesWithPos)
+    for pos, variable in newVariablesWithPos.items():
+        move = {'target': opt, 'from': pos, 'value': variable}
+        print('Apply')
+        print (move)
+        print(newOptionMap)
+        if solve(inputOptions, newOptionMap, newVariablesWithPos, move):
+            return True
+        else:
+            print('Undo')
+    
+    return False
+    
+
+solve(gameState.inputOptions, equationsPrOption, gameState.variablesWithPos.symbols)
