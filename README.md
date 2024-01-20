@@ -122,7 +122,18 @@ The brain is used to solve the puzzle,
 - Step1, load data
 - Step2, detect equations in the matrix (they are just numbers)
 - Step3, Map variables in equations to coordinate system
-- Set variables and test for validity, select equations according to lowest level of freedom to limit test space
+- Set variables and test for validity, **select equations according to lowest level of freedom to limit test space**
+
+### Optimization note
+Selecting according to the lowest level of freedom has a huge effect, the following table shows how the number of visited nodes increased exponentially.
+| **Category** | **worst** | **no sorting** | **optimized** |
+|--------------|-----------|----------------|---------------|
+| **expert**   | 5789328   | 1708           | 338           |
+| **difficult**| 3495390   | 4672           | 216           |
+| **medium**   | 7850      | 366            | 80            |
+| **easy**     | 88        | 88             | 40            |
+
+![Sorting effect](./YTACM-EYE/doc/sorting_effect.png)
 
 ## Solution for easy
  ```time  python solve.py /shared/cross-math-scan-result.txt```
