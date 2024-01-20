@@ -126,12 +126,12 @@ The brain🧠 is used to solve the puzzle🧩
 
 ### Optimization note
 Selecting according to the lowest level of freedom has a huge effect, the following table shows how the number of visited nodes increased exponentially.
-| **Category** | **worst** | **no sorting** | **optimized** |
-|--------------|-----------|----------------|---------------|
-| **expert**   | 2894664   | 854            | 169           |
-| **difficult**| 1747695   | 2336           | 108           |
-| **medium**   | 3925      | 183            | 40            |
-| **easy**     | 44        | 44             | 20            |
+| **Category** | **worst** | **no sorting** | **optimized** | **# variables** |
+|--------------|-----------|----------------|---------------|-----------------|
+| **expert**   | 2894664   | 854            | 169           | 18              |
+| **difficult**| 1747695   | 2336           | 108           | 14              |     
+| **medium**   | 3925      | 183            | 40            | 14              |     
+| **easy**     | 44        | 44             | 20            | 8               |     
 
 ![Sorting effect](./YTACM-EYE/doc/sorting_effect.png)
 

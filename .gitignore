@@ -2,3 +2,4 @@
 YTACM-EYE/app/out/*.png
 shared/*
 YTACM-BRAIN/app/__pycache__/*
+YTACM-BRAIN/app/travel-history.txt
