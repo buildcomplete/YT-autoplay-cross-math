@@ -120,90 +120,72 @@ for opt in gameState.inputOptions:
     equationsPrOption[opt] = {
         'eq':eqFound, 
         'complexity': (min(map(lambda x:x.count('_')/2, eqFound)))}
-#equationsPrOptions
 
-def solve(_options, _equationsToOptionMap, _variablesWithPos , _action = None ):
-    # Test if the move we just made is good
-    # _action should somehow represent setting a specific variable to a target
-    # if the move is valid, update the equationsMap and continue if the are move variables
-    # if not, return false
+def updateEquations(_equations, _varname, _value):
+    # Replace equations variable fields with value of tested action
+    tRow, tCol = _varname
+    def updateEquation(eqWithOpts):
+        return  (eqWithOpts[0].replace(str.format('_{}:{}_', tRow, tCol), _value), eqWithOpts[1] - {(tRow, tCol)} )
+    return list(map(updateEquation, _equations))
+
+def validateEquations(_equations):
+
+    # Evaluate that all equations without variables are true
+    def equationCouldBeValid(eq: str):
+        # If there is no more symbols to replace, the equation can be evaluated
+        if eq.count('_') == 0:
+                return eval(eq.replace('=', '==').replace('x','*'))
+        # Otherwise, if there is more stuff possible to replace, the equation might be possible to solve still
+        return True    
+    return reduce(lambda a,b: a and equationCouldBeValid(b[0]), _equations, True )
     
-    if _action == None:
-        newOptionMap = _equationsToOptionMap
-        newVariablesWithPos = _variablesWithPos
-    else:
-        target = _action['target']
-        eqToUpdate = _equationsToOptionMap[target]
+def solve(_equations, _symbols, _solutionPath = [] , _testAction = None):
+    
+    # At first iteration, move equations to _solutionPath
+    if (_testAction == None):
+        _solutionPath.insert(0,_equations)
 
-        # Replace equations variable fields with value of tested action
-        tRow, tCol = target
-        def updateEquation(eq: str):
-            return eq.replace(str.format('_{}:{}_', tRow, tCol), _action['value'])
-        updatedEquations = list(map(updateEquation, eqToUpdate['eq']))
-        
-        # Evaluate that all equations without variables are true
-        def equationCouldBeValid(eq: str):
-            # If there is no more symbols to replace, the equation can be evaluated
-            if eq.count('_') == 0:
-                    return eval(eq.replace('=', '==').replace('x','*'))
-            # Otherwise, if there is more stuff possible to replace, the equation might be possible to solve still
-            return True    
-        validMove = reduce(lambda a,b: a and equationCouldBeValid(b), updatedEquations, True )
-
-        # Dead end in the tree, cancel path
+    # If we are making a testAction, update all equations and test if they can still be solved
+    if (_testAction != None):
+        _equations = _solutionPath[0]
+        updatedEquations = updateEquations(_equations, _testAction['varname'], _testAction['value'])
+        validMove = validateEquations(updatedEquations)
         if not validMove:
-            return (False, _action)
-        print(( "valid:", _action))
-        # Move was valid with local reference, loop over all equations and update
-        oldCopy = _equationsToOptionMap
-        
-        newOptionMap={}
-        for k, v in oldCopy.items():
-            updatedEquations2 = list(map(updateEquation, v['eq']))
-            v['eq']=updatedEquations2
-            newOptionMap[k]=v
-        # print(_variablesWithPos)
-        newVariablesWithPos = _variablesWithPos.copy()
-        del newVariablesWithPos[_action['from']]
-            
-    if len(_options)==0:
-        return (True, _action)
-    
-    inputOptions = sorted(_options, key=lambda x:newOptionMap[x]['complexity'] + 0.1*len(newOptionMap[x]['eq']) )
-    # Take the next option with lowest complexity
-    # loop over all variables, and test, until solve return true
-    
-    opt = inputOptions.pop(0)
-    
-    # Find equations where this option is present
-    print(_equationsToOptionMap[opt]['eq'])
-    print(newVariablesWithPos)
-    
-    for pos, variable in newVariablesWithPos.items():
-        move = {'target': opt, 'from': pos, 'value': variable}
-        print(_equationsToOptionMap[opt]['eq'])
-        print(move)
-        
-        s,m = solve(inputOptions, newOptionMap, newVariablesWithPos, move)
-        r=input("step")
-        if (r=='n'):
-            exit()
+            print('undo', _testAction)
+            return False
+        else:
+            print('proceed with', _testAction)
+            _solutionPath.insert(0,updatedEquations)
+            newSymbols = _symbols.copy()
+            del newSymbols[_testAction['symIdx']]
+            _symbols = newSymbols
 
-        if s:
-            print (m) 
-            print (move) 
-            return (True, move)
+    # Sort equations and take simplest first
+    equations = list(filter(lambda x: len(x[1])!=0, _solutionPath[0]))
+    equations = sorted(equations, key=lambda x:len(x[1]))
+    solvedEquations = list(filter(lambda x: len(x[1])==0, _solutionPath[0]))
     
-    return (False, move)
-    
-
-def solve2(_equations, _options, _solvedEquations = [] , _testAction = None ):
-    if len(_equations)==0:
+    # If there are no more to solve, we can return true
+    if len(equations)==0:
+        print ('Solution:')
+        print(_solutionPath[0])
         return True
     
-
+    (eq, eqVars) = equations.pop(0)
+    print(solvedEquations)
+    print(equations)
+    print (eq)
+    print (eqVars)
+    print(_symbols)
+    varname = eqVars.pop()
+    for symIdx, symVal in _symbols.items():
+        action = {'varname': varname, 'value':symVal, 'symIdx': symIdx}
+        if solve(_equations, _symbols, _solutionPath,  action ):
+            print(action)
+            return True 
     
-    
+    # Reached invalid on this path, undo solutionPath
+    _solutionPath.pop(0)
+    return False
 
-
-solve2(gameState.equations, gameState.inputOptions, gameState.variablesWithPos.symbols)
+solve(gameState.equations, gameState.variablesWithPos.symbols)
