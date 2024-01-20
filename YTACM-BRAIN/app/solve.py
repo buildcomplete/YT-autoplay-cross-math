@@ -4,17 +4,6 @@ from GameState import GameState
              
 gameState = GameState(sys.argv[1])
 
-# print("inputs to solve an equation from set")
-equationsPrOption = {}
-for opt in gameState.inputOptions:
-    eqFound = []
-    for eqWithOpts in gameState.equations:
-        if (opt in eqWithOpts[1]):
-            eqFound.append(eqWithOpts[0])
-    equationsPrOption[opt] = {
-        'eq':eqFound, 
-        'complexity': (min(map(lambda x:x.count('_')/2, eqFound)))}
-
 def updateEquations(_equations, _varname, _value):
     # Replace equations variable fields with value of tested action
     tRow, tCol = _varname
@@ -56,7 +45,6 @@ def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction
     # Sort equations and take simplest first
     equations = list(filter(lambda x: len(x[1])!=0, _solutionPath[0]))
     equations = sorted(equations, key=lambda x:len(x[1]))
-    solvedEquations = list(filter(lambda x: len(x[1])==0, _solutionPath[0]))
     
     # If there are no more to solve, we can return true
     if len(equations)==0:
@@ -66,16 +54,16 @@ def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction
     
     (eq, eqVars) = equations.pop(0)
 
-
-    if (_testAction == None):
-        nodeName='root'
-    else:
-        nodeName = f"{len(_solutionPath)}_{_testAction['varname'][0]}_{_testAction['varname'][1]}_{_testAction['value']}"
+    nodeName = 'root' if (_testAction == None) else f"{len(_solutionPath)}_{_testAction['varname'][0]}_{_testAction['varname'][1]}_{_testAction['value']}"
 
     varname = eqVars.pop()
+    testedVal = set()
     for symIdx, symVal in _symbols.items():
         action = {'varname': varname, 'value':symVal, 'symIdx': symIdx}
-        
+        if symVal in testedVal:
+            continue
+        testedVal.add(symVal)
+
         childNodeName = f"{len(_solutionPath)+1}_{action['varname'][0]}_{action['varname'][1]}_{action['value']}"
 
         _travelHistory.write(f"{nodeName}-->{childNodeName}\n")
@@ -86,7 +74,7 @@ def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction
         else:
             _travelHistory.write(f"{childNodeName}-->{nodeName}\n")
     
-    # Reached invalid on this path, undo solutionPath
+    # Reached invalid leaf on this path, undo solutionPath
     _solutionPath.pop(0)
     return False
 
