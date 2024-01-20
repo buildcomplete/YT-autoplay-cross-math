@@ -117,10 +117,10 @@ variables_with_pos=
 ```
 
 # Brain
-The brain is used to solve the puzzle, 
+The brain🧠 is used to solve the puzzle🧩 
 
 - Step1, load data
-- Step2, detect equations in the matrix (they are just numbers)
+- Step2, detect equations in the matrix (they are just saved as numbers with coordinates and needs to be mapped according to adjacency)
 - Step3, Map variables in equations to coordinate system
 - Set variables and test for validity, **select equations according to lowest level of freedom to limit test space**
 
@@ -128,10 +128,10 @@ The brain is used to solve the puzzle,
 Selecting according to the lowest level of freedom has a huge effect, the following table shows how the number of visited nodes increased exponentially.
 | **Category** | **worst** | **no sorting** | **optimized** |
 |--------------|-----------|----------------|---------------|
-| **expert**   | 5789328   | 1708           | 338           |
-| **difficult**| 3495390   | 4672           | 216           |
-| **medium**   | 7850      | 366            | 80            |
-| **easy**     | 88        | 88             | 40            |
+| **expert**   | 2894664   | 854            | 169           |
+| **difficult**| 1747695   | 2336           | 108           |
+| **medium**   | 3925      | 183            | 40            |
+| **easy**     | 44        | 44             | 20            |
 
 ![Sorting effect](./YTACM-EYE/doc/sorting_effect.png)
 

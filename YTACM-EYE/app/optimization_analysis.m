@@ -2,10 +2,10 @@
 
 #nCombinations
 # worst, bruteforce, best
-expert=[5789328 1708 338]
-difficult=[3495390 4672 216]
-medium=[7850 366 80]
-easy=[88 88 40]
+expert=[5789328 1708 338]./2
+difficult=[3495390 4672 216]./2
+medium=[7850 366 80]./2
+easy=[88 88 40]./2
 
 subplot(1,2,1)
 plot([easy;medium;difficult;expert]');
