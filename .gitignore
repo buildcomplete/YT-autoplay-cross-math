@@ -1,3 +1,4 @@
 *.mp4
 YTACM-EYE/app/out/*.png
 shared/*
+YTACM-BRAIN/app/__pycache__/*
