@@ -1,3 +1,4 @@
+import sys
 from functools import reduce
 
 # Class that contains all the fieldTypes and a method to get a field in the internal structure
@@ -19,9 +20,6 @@ class FieldTypes:
     
     def isSymbol(self, r,c):
         return self.getField(r,c)==2
-    
-    def isBREdge(self, r,c):
-        return r == (self.rows-1) or c == (self.cols-1)
     
     # Create field types expecting filePointer to be matching octave output
     def BuildFieldTypes(fp):
@@ -63,31 +61,39 @@ class GameState:
         self.CreateEquations()
     
     def _rowAndColIter(self):
-        for r in range(self.fieldTypes.rows) :
-            for c in range(self.fieldTypes.cols) :
-                yield r,c
-        
-        for c in range(self.fieldTypes.cols) :
+        if (self.fieldTypes.cols>1):
             for r in range(self.fieldTypes.rows) :
-                yield r,c
-
+                for c in range(self.fieldTypes.cols) :
+                    yield r,c
+                yield (-1, -1)
+        if (self.fieldTypes.rows>1):
+            for c in range(self.fieldTypes.cols) :
+                for r in range(self.fieldTypes.rows) :
+                    yield r,c
+                yield (-1, -1)
+        
     def CreateEquations(self):
         T = self.fieldTypes
         S = self.symbolWithPos
         
         self.equations = []
         self.inputOptions = set()
-        
         currentEquation = ""
         currentEquationVariables = set()
         i = 0
         for r,c in self._rowAndColIter() :
-            if T.isSymbol(r,c):
+            if r==-1: # Special value for wrap around, or finish
+                if i>1:
+                    self.equations.append((currentEquation, currentEquationVariables))
+                currentEquation=""
+                currentEquationVariables=set()
+                i=0
+            elif T.isSymbol(r,c):
                 i+=1
                 currentEquation =  currentEquation+ S.getSymbol(r,c)
             elif T.isInput(r,c):
                 i+=1
-                currentEquation = currentEquation + str.format('_{},{}_', r,c)
+                currentEquation = currentEquation + str.format('_{}:{}_', r,c)
                 currentEquationVariables.add((r,c))
                 self.inputOptions.add((r,c))
             elif i>1:
@@ -99,34 +105,10 @@ class GameState:
                 currentEquation=""
                 currentEquationVariables=set()
                 i=0
-            # Special case to make sure no wrap around and no missing equation
-            if (T.isBREdge(r,c) and i>1):
-                self.equations.append((currentEquation, currentEquationVariables))
-                currentEquation=""
-                currentEquationVariables=set()
-                i=0
-            if (T.isBREdge(r,c) and i==1):
-                currentEquation=""
-                currentEquationVariables=set()
-                i=0
-
-        # count minimum number of related input for a specific input coordinate
-        #for opt in inputOptions:
 
 
-    def PrintState(self):
-        print(self.fieldTypes.fields)
-        print(self.variablesWithPos.symbols)
-        print(self.symbolWithPos.symbols)
-
-                    
-gameState = GameState('/shared/cross-math-scan-result.txt')
-#gameState.PrintEquations()
-# print("equations=")
-# print(gameState.equations)
-
-# print("inputOptions=")
-# print(gameState.inputOptions)
+             
+gameState = GameState(sys.argv[1])
 
 # print("inputs to solve an equation from set")
 equationsPrOption = {}
@@ -153,25 +135,25 @@ def solve(_options, _equationsToOptionMap, _variablesWithPos , _action = None ):
         target = _action['target']
         eqToUpdate = _equationsToOptionMap[target]
 
+        # Replace equations variable fields with value of tested action
         tRow, tCol = target
-
         def updateEquation(eq: str):
-            return eq.replace(str.format('_{},{}_', tRow, tCol), _action['value'])
-
-        # map(lambda eq: eq.replace('_{},{}_', _action['target']), _equationsToUpdate
+            return eq.replace(str.format('_{}:{}_', tRow, tCol), _action['value'])
         updatedEquations = list(map(updateEquation, eqToUpdate['eq']))
-
+        
+        # Evaluate that all equations without variables are true
         def equationCouldBeValid(eq: str):
             # If there is no more symbols to replace, the equation can be evaluated
             if eq.count('_') == 0:
-                    return eval(eq.replace('=', '=='))
-            # Otherwhise, if there is more stuff possible to replace, the equation might be possible to solve still
-            return True 
-            
-        validMove = reduce(lambda a,b: b and equationCouldBeValid(a), updatedEquations )
+                    return eval(eq.replace('=', '==').replace('x','*'))
+            # Otherwise, if there is more stuff possible to replace, the equation might be possible to solve still
+            return True    
+        validMove = reduce(lambda a,b: a and equationCouldBeValid(b), updatedEquations, True )
+
+        # Dead end in the tree, cancel path
         if not validMove:
-            return False
-        
+            return (False, _action)
+        print(( "valid:", _action))
         # Move was valid with local reference, loop over all equations and update
         oldCopy = _equationsToOptionMap
         
@@ -180,33 +162,48 @@ def solve(_options, _equationsToOptionMap, _variablesWithPos , _action = None ):
             updatedEquations2 = list(map(updateEquation, v['eq']))
             v['eq']=updatedEquations2
             newOptionMap[k]=v
-        print(_variablesWithPos)
+        # print(_variablesWithPos)
         newVariablesWithPos = _variablesWithPos.copy()
         del newVariablesWithPos[_action['from']]
             
     if len(_options)==0:
-        print ("solution found")
-        return True
+        return (True, _action)
     
-    inputOptions = sorted(_options, key=lambda x:newOptionMap[x]['complexity'] - 0.1*len(newOptionMap[x]['eq']) )
+    inputOptions = sorted(_options, key=lambda x:newOptionMap[x]['complexity'] + 0.1*len(newOptionMap[x]['eq']) )
     # Take the next option with lowest complexity
     # loop over all variables, and test, until solve return true
     
     opt = inputOptions.pop(0)
+    
     # Find equations where this option is present
     print(_equationsToOptionMap[opt]['eq'])
     print(newVariablesWithPos)
+    
     for pos, variable in newVariablesWithPos.items():
         move = {'target': opt, 'from': pos, 'value': variable}
-        print('Apply')
-        print (move)
-        print(newOptionMap)
-        if solve(inputOptions, newOptionMap, newVariablesWithPos, move):
-            return True
-        else:
-            print('Undo')
+        print(_equationsToOptionMap[opt]['eq'])
+        print(move)
+        
+        s,m = solve(inputOptions, newOptionMap, newVariablesWithPos, move)
+        r=input("step")
+        if (r=='n'):
+            exit()
+
+        if s:
+            print (m) 
+            print (move) 
+            return (True, move)
     
-    return False
+    return (False, move)
     
 
-solve(gameState.inputOptions, equationsPrOption, gameState.variablesWithPos.symbols)
+def solve2(_equations, _options, _solvedEquations = [] , _testAction = None ):
+    if len(_equations)==0:
+        return True
+    
+
+    
+    
+
+
+solve2(gameState.equations, gameState.inputOptions, gameState.variablesWithPos.symbols)
