@@ -4,7 +4,7 @@
  function [symColIdx symRowIdx]= sub_find_symbol_splits(X)
   % Split image symbols, symbols are split if there is a vertical line between the symbols
   % Assuming first pixel is background
-  maskBg = (abs(double(X) - double(X(1))) < 2) ./ (size(X,1));
+  maskBg = (abs(double(X) - double(X(1))) < 5) ./ (size(X,1));
   sProf = sum(maskBg,1);
   symbolIdx = sProf < ((max(sProf) - 0.01));
 

@@ -139,19 +139,21 @@ def validateEquations(_equations):
         return True    
     return reduce(lambda a,b: a and equationCouldBeValid(b[0]), _equations, True )
     
-def solve(_equations, _symbols, _solutionPath = [] , _testAction = None):
+def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction = None):
     
     # At first iteration, move equations to _solutionPath
     if (_testAction == None):
         _solutionPath.insert(0,_equations)
-
+    
     # If we are making a testAction, update all equations and test if they can still be solved
     if (_testAction != None):
+        
         _equations = _solutionPath[0]
         updatedEquations = updateEquations(_equations, _testAction['varname'], _testAction['value'])
         validMove = validateEquations(updatedEquations)
         if not validMove:
             print('undo', _testAction)
+        
             return False
         else:
             print('proceed with', _testAction)
@@ -177,15 +179,29 @@ def solve(_equations, _symbols, _solutionPath = [] , _testAction = None):
     print (eq)
     print (eqVars)
     print(_symbols)
+
+    if (_testAction == None):
+        nodeName='root'
+    else:
+        nodeName = f"{len(_solutionPath)}_{_testAction['varname'][0]}_{_testAction['varname'][1]}_{_testAction['value']}"
+
     varname = eqVars.pop()
     for symIdx, symVal in _symbols.items():
         action = {'varname': varname, 'value':symVal, 'symIdx': symIdx}
-        if solve(_equations, _symbols, _solutionPath,  action ):
+        
+        childNodeName = f"{len(_solutionPath)+1}_{action['varname'][0]}_{action['varname'][1]}_{action['value']}"
+
+        _travelHistory.write(f"{nodeName}-->{childNodeName}\n")
+        
+        if solve(_equations, _symbols, _travelHistory, _solutionPath,  action ):
             print(action)
-            return True 
+            return True
+        else:
+            _travelHistory.write(f"{childNodeName}-->{nodeName}\n")
     
     # Reached invalid on this path, undo solutionPath
     _solutionPath.pop(0)
     return False
 
-solve(gameState.equations, gameState.variablesWithPos.symbols)
+with open('travel-history.txt', 'wt') as fp:
+    solve(gameState.equations, gameState.variablesWithPos.symbols, fp)

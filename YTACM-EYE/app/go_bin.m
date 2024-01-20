@@ -3,7 +3,7 @@ pkg load image;
 
 %img = rgb2gray(imread('images/Screenshot_20240106_134529_Cross Math.jpg'));
 close all;
-img = rgb2gray(imread('images/easy.jpg'));
+img = rgb2gray(imread('images/expert.png'));
 step0_segment_areas
 
 step1_find_playfield_method2
