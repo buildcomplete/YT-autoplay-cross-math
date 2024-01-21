@@ -51,8 +51,6 @@ def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction
         print ('Solution:')
         print(_solutionPath[0])
         return True
-    elif (_testAction != None):
-        _travelHistory.write("--✔-->\n")
     
     def cleanEqForMermaid(x):
         return x.replace(" ","_").replace('+','p').replace('-','m').replace('=','e').replace('/','s')
@@ -76,14 +74,13 @@ def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction
 
         childNodeName = f"{cleanEqForMermaid(nameFromAction(action))}(\"{nameFromAction(action)}\")"
 
-        #childNodeName = "sweetchild" #f"{len(_solutionPath)}_{updateEquations([eq],action['varname'],action['value'])[0]}"
-        _travelHistory.write(f"{nodeName}-->{childNodeName}")
+        _travelHistory.write(f"{nodeName}-->{childNodeName}\n")
         
         if solve(_equations, _symbols, _travelHistory, _solutionPath,  action ):
             print(action)
             return True
         else:
-            _travelHistory.write(f"\n{childNodeName}-->{nodeName}\n")
+            _travelHistory.write(f"{childNodeName}-->{nodeName}\n")
     
     # Reached invalid leaf on this path, undo solutionPath
     _solutionPath.pop(0)
