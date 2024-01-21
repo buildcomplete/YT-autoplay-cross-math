@@ -51,28 +51,39 @@ def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction
         print ('Solution:')
         print(_solutionPath[0])
         return True
+    elif (_testAction != None):
+        _travelHistory.write("--✔-->\n")
+    
+    def cleanEqForMermaid(x):
+        return x.replace(" ","_").replace('+','p').replace('-','m').replace('=','e').replace('/','s')
+
+    def nameFromAction(act, parent = False):
+        L = len(_solutionPath)- (1 if parent else 0)
+        return f"L{L} {updateEquations([(act['eq'], {act['varname']})],act['varname'],act['value'])[0][0]}"
+    
+    nodeName = 'root' if (_testAction == None) else f"{cleanEqForMermaid(nameFromAction(_testAction, True))}(\"{nameFromAction(_testAction, True)}\")"
     
     (eq, eqVars) = equations.pop(0)
 
-    nodeName = 'root' if (_testAction == None) else f"{len(_solutionPath)}_{_testAction['varname'][0]}_{_testAction['varname'][1]}_{_testAction['value']}"
-
+    
     varname = eqVars.pop()
     testedVal = set()
     for symIdx, symVal in _symbols.items():
-        action = {'varname': varname, 'value':symVal, 'symIdx': symIdx}
+        action = {'varname': varname, 'value':symVal, 'symIdx': symIdx, 'eq':eq}
         if symVal in testedVal:
             continue
         testedVal.add(symVal)
 
-        childNodeName = f"{len(_solutionPath)+1}_{action['varname'][0]}_{action['varname'][1]}_{action['value']}"
+        childNodeName = f"{cleanEqForMermaid(nameFromAction(action))}(\"{nameFromAction(action)}\")"
 
-        _travelHistory.write(f"{nodeName}-->{childNodeName}\n")
+        #childNodeName = "sweetchild" #f"{len(_solutionPath)}_{updateEquations([eq],action['varname'],action['value'])[0]}"
+        _travelHistory.write(f"{nodeName}-->{childNodeName}")
         
         if solve(_equations, _symbols, _travelHistory, _solutionPath,  action ):
             print(action)
             return True
         else:
-            _travelHistory.write(f"{childNodeName}-->{nodeName}\n")
+            _travelHistory.write(f"\n{childNodeName}-->{nodeName}\n")
     
     # Reached invalid leaf on this path, undo solutionPath
     _solutionPath.pop(0)
