@@ -26,8 +26,8 @@ subplot(2,2,1)
 colormap gray
 imagesc(X);
 hold on;
-plot(ones(1,length(hPosSynth)) .* boundsCols(1), hPosSynth, 'r_')
-plot(vPosSynth, ones(1,length(vPosSynth)) .* boundsRows(1), 'g|')
+plot(ones(1,length(hPosSynth)) .* boundsCols(1), hPosSynth, 'r+');
+plot(vPosSynth, ones(1,length(vPosSynth)) .* boundsRows(1), 'g+');
 
 
 subplot(2,2,2)

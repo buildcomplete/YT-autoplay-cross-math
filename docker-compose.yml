@@ -7,6 +7,14 @@ services:
       - ./YTACM-BRAIN/app:/brain
       - ./shared:/shared
       - brainroot:/root
+  eye:
+    container_name: eye
+    build: './YTACM-EYE/'
+    volumes:
+      - ./YTACM-EYE/app:/eye
+      - ./shared:/shared
+      - eyeroot:/root
 
 volumes:
   brainroot:
+  eyeroot:
