@@ -1,9 +1,20 @@
 pkg load signal;
 pkg load image;
 
+if nargin == 2
+    arg_list = argv ();
+    imageFilename = arg_list{1}
+    resultFilename = arg_list{2}
+else
+    imageFilename = 'images/difficult.png';
+    resultFilename = 'cross-math-scan-result.txt'
+end
+
+disp(imageFilename)
+
 %img = rgb2gray(imread('images/Screenshot_20240106_134529_Cross Math.jpg'));
 close all;
-img = rgb2gray(imread('images/difficult.png'));
+img = rgb2gray(imread(imageFilename));
 step0_segment_areas
 
 step1_find_playfield_method2

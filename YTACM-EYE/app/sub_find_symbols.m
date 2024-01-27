@@ -19,7 +19,12 @@ function symbolIdx = sub_find_symbols(I, symbolLib)
       arT = bboxT(1) / bboxT(2);
       arI = bboxI(1) / bboxI(2);
 
-      aspectOk = (max([arT arI]) / min([arT arI])) < 1.1; % Aspect ratio of symbol must be similar%
+      # Warning, there is something fishy about the logic since a padding is added to the template
+      # If the image is much smaller, the padding will be relatively bigger
+      # and impact aspect ratio
+      # The aspect ratio goes toward 1 as image size goes towards 0
+      # Still a bit puzzled, since I do remove the padding in the comparison
+      aspectOk = (max([arT arI]) / min([arT arI])) < 1.25; % Aspect ratio of symbol must be similar%
       T_Diag = sqrt(sum(bboxT.^2));
       I_Diag = sqrt(sum(bboxI.^2));
       scaleFactor = I_Diag / T_Diag;

@@ -1,4 +1,4 @@
-filename = "cross-math-scan-result.txt";
+filename = resultFilename;
 fid = fopen (filename, "w");
 
 fdisp(fid, "fieldTypes=");
