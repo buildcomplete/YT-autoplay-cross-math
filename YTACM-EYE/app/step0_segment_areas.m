@@ -13,8 +13,8 @@ transCols(1)=0;transCols(end)=0; % fix borders
 transRows = abs(conv(sumRows, [1 0 -1], shape="same" ));
 transRows(1)=0;transRows(end)=0; % fix borders
 
-[_, idxCols] = findpeaks(transCols, "MinPeakHeight", 100, "MinPeakDistance", 5);
-[_, idxRows] = findpeaks(transRows, "MinPeakHeight", 100, "MinPeakDistance", 5);
+[_, idxCols] = findpeaks(transCols, "MinPeakHeight", size(img,1)*0.6, "MinPeakDistance", 5);
+[_, idxRows] = findpeaks(transRows, "MinPeakHeight", size(img,2)*0.8, "MinPeakDistance", 5);
 idxRows= idxRows(2:end); % For rows we skip the first item (transition from info to bg)
 
 figure
