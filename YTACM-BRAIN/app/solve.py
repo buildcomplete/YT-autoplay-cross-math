@@ -1,8 +1,6 @@
 import sys
 from functools import reduce
 from GameState import GameState
-             
-gameState = GameState(sys.argv[1])
 
 def updateEquations(_equations, _varname, _value):
     # Replace equations variable fields with value of tested action
@@ -62,7 +60,6 @@ def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction
     nodeName = 'root' if (_testAction == None) else f"{cleanEqForMermaid(nameFromAction(_testAction, True))}(\"{nameFromAction(_testAction, True)}\")"
     
     (eq, eqVars) = equations.pop(0)
-
     
     varname = eqVars.pop()
     testedVal = set()
@@ -86,5 +83,6 @@ def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction
     _solutionPath.pop(0)
     return False
 
+gameState = GameState(sys.argv[1])
 with open('travel-history.txt', 'wt') as fp:
     solve(gameState.equations, gameState.variablesWithPos.symbols, fp)
