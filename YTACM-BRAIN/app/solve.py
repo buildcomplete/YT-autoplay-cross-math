@@ -83,6 +83,7 @@ def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction
     _solutionPath.pop(0)
     return False
 
+print(f"Reading from:{sys.argv[1]}")
 gameState = GameState(sys.argv[1])
 with open('travel-history.txt', 'wt') as fp:
     solve(gameState.equations, gameState.variablesWithPos.symbols, fp)

@@ -17,26 +17,29 @@ transRows(1)=0;transRows(end)=0; % fix borders
 [_, idxRows] = findpeaks(transRows, "MinPeakHeight", size(img,2)*0.8, "MinPeakDistance", 5);
 idxRows= idxRows(2:end); % For rows we skip the first item (transition from info to bg)
 
-figure
-subplot(2,2,1);
-imagesc(maskOne)
-colormap gray
-hold on;
-plot( idxCols, ones(1,length(idxCols)) .* size(maskOne,1)/2 , 'r+');
-plot( ones(1,length(idxRows)) .* size(maskOne,2)/2, idxRows , 'g+');
+if plotOn
+  figure
+  subplot(2,2,1);
+  imagesc(maskOne)
+  colormap gray
+  hold on;
+  plot( idxCols, ones(1,length(idxCols)) .* size(maskOne,1)/2 , 'r+');
+  plot( ones(1,length(idxRows)) .* size(maskOne,2)/2, idxRows , 'g+');
 
-subplot(2,2,2);
-plot(transRows, 1:length(transRows));
-axis("ij");
+  subplot(2,2,2);
+  plot(transRows, 1:length(transRows));
+  axis("ij");
 
-subplot(2,2,3);
-plot(transCols);
+  subplot(2,2,3);
+  plot(transCols);
+end
 
 % extract playfield and variables
 pad = 15;
 playfield = img((idxRows(1)+pad):(idxRows(2)-pad), (idxCols(1)+pad:idxCols(2)-pad));
 variables = img((idxRows(3)+pad):(idxRows(4)-pad), (idxCols(1)+pad):(idxCols(2)-pad));
-
+p_b = [idxRows(1)+pad, idxCols(1)+pad ]; % Store offests for back projection
+v_b = [idxRows(3)+pad, idxCols(1)+pad]; % Store offests for back projection
 % Further more, remove top rows of playfield,
 % Assuming there will
 % 1) fist be background,
@@ -47,19 +50,20 @@ playfieldMaskCols = sum(playfieldMask,2) ;
 varifieldMask = (variables - variables(1)) < 5;
 varifieldMaskCols = sum(varifieldMask,2) ;
 
+if plotOn
+  figure;
+  subplot(2,2,1);
+  imagesc(playfieldMask)
+  subplot(2,2,2);
+  plot( playfieldMaskCols, 1:length(playfieldMaskCols));
+  axis("ij");
 
-figure;
-subplot(2,2,1);
-imagesc(playfieldMask)
-subplot(2,2,2);
-plot( playfieldMaskCols, 1:length(playfieldMaskCols));
-axis("ij");
-
-subplot(2,2,3);
-imagesc(varifieldMask)
-subplot(2,2,4);
-plot( varifieldMaskCols, 1:length(varifieldMaskCols));
-axis("ij");
+  subplot(2,2,3);
+  imagesc(varifieldMask)
+  subplot(2,2,4);
+  plot( varifieldMaskCols, 1:length(varifieldMaskCols));
+  axis("ij");
+end
 
 foundDip = false;
 for i=2:length(playfieldMaskCols)
@@ -72,6 +76,7 @@ for i=2:length(playfieldMaskCols)
   end
 end
 playfield=playfield(i:end,:);
+p_b(1) = p_b(1)+i; % update offest for back projection
 
 foundDip = false;
 for i=length(varifieldMaskCols):-1:2
@@ -85,11 +90,10 @@ for i=length(varifieldMaskCols):-1:2
 end
 variables=variables(1:i,:);
 
-
-figure
-subplot(1,2,1);
-imshow(playfield)
-subplot(1,2,2);
-imshow(variables)
-
-
+if plotOn
+  figure
+  subplot(1,2,1);
+  imshow(playfield)
+  subplot(1,2,2);
+  imshow(variables)
+end

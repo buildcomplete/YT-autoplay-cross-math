@@ -1,13 +1,16 @@
 pkg load signal;
 pkg load image;
 
-if nargin == 2
+if nargin == 3
     arg_list = argv ();
     imageFilename = arg_list{1}
     resultFilename = arg_list{2}
+    plotOn = arg_list{3} == "1"
+
 else
     imageFilename = 'images/difficult.png';
     resultFilename = 'cross-math-scan-result.txt'
+    plotOn = false
 end
 
 disp(imageFilename)

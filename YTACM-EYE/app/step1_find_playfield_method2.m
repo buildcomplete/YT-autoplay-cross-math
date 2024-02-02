@@ -20,17 +20,18 @@ nObj = floor([
 vPosSynth = round(linspace(boundsCols(1), boundsCols(2), nObj(2) + 1)); % column index
 hPosSynth = round(linspace(boundsRows(1), boundsRows(2), nObj(1) + 1)); % row index
 
+if plotOn
+  figure
+  subplot(2,2,1)
+  colormap gray
+  imagesc(X);
+  hold on;
+  plot(ones(1,length(hPosSynth)) .* boundsCols(1), hPosSynth, 'r+');
+  plot(vPosSynth, ones(1,length(vPosSynth)) .* boundsRows(1), 'g+');
 
-figure
-subplot(2,2,1)
-colormap gray
-imagesc(X);
-hold on;
-plot(ones(1,length(hPosSynth)) .* boundsCols(1), hPosSynth, 'r+');
-plot(vPosSynth, ones(1,length(vPosSynth)) .* boundsRows(1), 'g+');
 
-
-subplot(2,2,2)
-imagesc(M);
-subplot(2,2,3)
-imagesc(D);
+  subplot(2,2,2)
+  imagesc(M);
+  subplot(2,2,3)
+  imagesc(D);
+end

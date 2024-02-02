@@ -14,6 +14,6 @@ do
     filename=$(basename -- "$file")
     extension="${filename##*.}"
     filename="${filename%.*}"
-    octave go_bin.m $file /shared/results/$filename.txt
+    octave go_bin.m $file /shared/results/$filename.txt 0
     mv $file /shared/processed/$filename.jpg
 done

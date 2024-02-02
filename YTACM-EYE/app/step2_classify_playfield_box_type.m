@@ -16,13 +16,21 @@ D2 = bwdist(not(M)); % distance to inside boxes
 stepSize = vPosSynth(2)- vPosSynth(1);
 
 fieldTypes = zeros(length(hPosSynth)-1, length(vPosSynth)-1);
+fieldCenters_r = zeros(1,size(fieldTypes,1));
+fieldCenters_c = zeros(1,size(fieldTypes,2));
+
+for idR = 1:size(fieldTypes,1)
+  fieldCenters_r(idR) = round((hPosSynth(idR) + hPosSynth(idR+1)) / 2);
+end
+
+for idC = 1:size(fieldTypes,2)
+  fieldCenters_c(idC) = round((vPosSynth(idC) + vPosSynth(idC+1)) / 2);
+end
 
 mgn = 5; % margin to test for value
 for idR = 1:size(fieldTypes,1)
   for idC = 1:size(fieldTypes,2)
-    center = round([
-      (hPosSynth(idR) + hPosSynth(idR+1)) / 2
-      (vPosSynth(idC) + vPosSynth(idC+1)) / 2]);
+    center = [fieldCenters_r(idR) fieldCenters_c(idC)];
 
     insideInput = D1(center(1), center(2)) > ( stepSize / 2 - mgn);
     insideSymbol =  (D2(center(1), center(2)) < ( stepSize / 2 - mgn)) && (D1(center(1), center(2)) < ( stepSize / 2 - mgn));
@@ -36,19 +44,20 @@ for idR = 1:size(fieldTypes,1)
   endfor
 endfor
 
-figure
-subplot(2,2,1)
-imagesc(M);
+if plotOn
+  figure
+  subplot(2,2,1)
+  imagesc(M);
 
-subplot(2,2,2)
-imagesc(D1);
-title("Distance to background, hiligthing input fields as max")
+  subplot(2,2,2)
+  imagesc(D1);
+  title("Distance to background, hiligthing input fields as max")
 
-subplot(2,2,3)
-imagesc(D2, [0 stepSize/2] );
-title("Distance to boxes, real background have values >= gridSize/2 in center grid positions")
+  subplot(2,2,3)
+  imagesc(D2, [0 stepSize/2] );
+  title("Distance to boxes, real background have values >= gridSize/2 in center grid positions")
 
-subplot(2,2,4)
-imagesc(fieldTypes);
-title("Classification of grid, 0=background, 1=input, 2=symbol or operator")
-
+  subplot(2,2,4)
+  imagesc(fieldTypes);
+  title("Classification of grid, 0=background, 1=input, 2=symbol or operator")
+end
