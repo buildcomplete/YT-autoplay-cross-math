@@ -55,6 +55,15 @@ class GameState:
                     self.symbolWithPos = SymbolsWithPos.BuildSymbolsWithPos(fp)
                 if line.startswith("variables_with_pos="):
                     self.variablesWithPos = SymbolsWithPos.BuildSymbolsWithPos(fp)
+                if line.startswith("fieldCenters_r="):
+                    self.fieldMappingR = list(map(int, fp.readline().strip().split()))
+                if line.startswith("fieldCenters_c="):
+                    self.fieldMappingC = list(map(int, fp.readline().strip().split()))
+                if line.startswith("varCenters_r="):
+                    self.symbolMappingR = list(map(int, fp.readline().strip().split()))
+                if line.startswith("varCenters_c="):
+                    self.symbolMappingC = list(map(int, fp.readline().strip().split()))
+
         self.CreateEquations()
     
     def _rowAndColIter(self):
