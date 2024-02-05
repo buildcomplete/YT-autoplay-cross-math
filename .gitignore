@@ -3,5 +3,4 @@ YTACM-EYE/app/out/*.png
 shared/*
 YTACM-BRAIN/app/__pycache__/*
 YTACM-BRAIN/app/travel-history.txt
-YTACM-EYE/app/swipes.csv
-YTACM-EYE/swipes.csv
+*.csv

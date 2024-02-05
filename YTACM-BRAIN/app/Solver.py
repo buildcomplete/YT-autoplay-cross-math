@@ -1,6 +1,4 @@
-import sys
 from functools import reduce
-from GameState import GameState
 
 def updateEquations(_equations, _varname, _value):
     # Replace equations variable fields with value of tested action
@@ -10,7 +8,6 @@ def updateEquations(_equations, _varname, _value):
     return list(map(updateEquation, _equations))
 
 def validateEquations(_equations):
-
     # Evaluate that all equations without variables are true
     def equationCouldBeValid(eq: str):
         # If there is no more symbols to replace, the equation can be evaluated
@@ -21,7 +18,6 @@ def validateEquations(_equations):
     return reduce(lambda a,b: a and equationCouldBeValid(b[0]), _equations, True )
     
 def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction = None):
-    
     # At first iteration, move equations to _solutionPath
     if (_testAction == None):
         _solutionPath.insert(0,_equations)
@@ -33,7 +29,7 @@ def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction
         updatedEquations = updateEquations(_equations, _testAction['varname'], _testAction['value'])
         validMove = validateEquations(updatedEquations)
         if not validMove:
-            return (False, None)
+            return (False, None, 1)
         else:
             _solutionPath.insert(0,updatedEquations)
             newSymbols = _symbols.copy()
@@ -48,7 +44,7 @@ def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction
     if len(equations)==0:
         print ('Solution:')
         print(_solutionPath[0])
-        return (True, []) # Return empty list, path will be appended in caller
+        return (True, [], 1) # Return empty list, path will be appended in caller
     
     def cleanEqForMermaid(x):
         return x.replace(" ","_").replace('+','p').replace('-','m').replace('=','e').replace('/','s')
@@ -63,6 +59,7 @@ def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction
     
     varname = eqVars.pop()
     testedVal = set()
+    nodesVisited = 1
     for symIdx, symVal in _symbols.items():
         action = {'varname': varname, 'value':symVal, 'symIdx': symIdx, 'eq':eq}
         if symVal in testedVal:
@@ -72,33 +69,15 @@ def solve(_equations, _symbols, _travelHistory, _solutionPath = [] , _testAction
         childNodeName = f"{cleanEqForMermaid(nameFromAction(action))}(\"{nameFromAction(action)}\")"
 
         _travelHistory.write(f"{nodeName}-->{childNodeName}\n")
-        solved, path = solve(_equations, _symbols, _travelHistory, _solutionPath,  action )
+        solved, path, subNodesVisited = solve(_equations, _symbols, _travelHistory, _solutionPath,  action )
+        nodesVisited += subNodesVisited
         if solved:
             path.append(action)
-            return (True, path)
+            return (True, path, nodesVisited)
         else:
             _travelHistory.write(f"{childNodeName}-->{nodeName}\n")
     
     # Reached invalid leaf on this path, undo solutionPath
     _solutionPath.pop(0)
-    return (False, None)
+    return (False, None, nodesVisited)
 
-print(f"Reading from:{sys.argv[1]}")
-gameState = GameState(sys.argv[1])
-with open('travel-history.txt', 'wt') as fp:
-    (solutionFound, path) = solve(gameState.equations, gameState.variablesWithPos.symbols, fp)
-    
-# store in image coordinates for applying to device and renderer
-if solutionFound:
-    with open('swipes.csv', 'wt') as fp:
-        fp.write(f"src_r, src_c, dst_r, dst_c\n")
-        path.reverse()
-        for action in path:
-            # action['varname'] is the position in the playfield to move to
-            dst_r = gameState.fieldMappingR[action['varname'][0]]
-            dst_c = gameState.fieldMappingC[action['varname'][1]]
-            symR, symC = map(int, action['symIdx'].split(","))
-            src_r = gameState.symbolMappingR[symR-1]
-            src_c = gameState.symbolMappingC[symC-1]
-            
-            fp.write(f"{src_r}, {src_c}, {dst_r}, {dst_c}\n")
