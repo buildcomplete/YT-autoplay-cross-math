@@ -4,3 +4,6 @@ shared/*
 YTACM-BRAIN/app/__pycache__/*
 YTACM-BRAIN/app/travel-history.txt
 *.csv
+*.txt
+YTACM-BRAIN/app/solution.stats
+YTACM-BRAIN/app/travel.hist

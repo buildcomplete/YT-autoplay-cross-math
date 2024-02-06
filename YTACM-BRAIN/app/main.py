@@ -1,21 +1,41 @@
 import sys
+import time
+from pathlib import Path
 from Solver import solve
 from GameState import GameState
 
 # usage
 # python main.py inputStateFilename resultSwipesFilename travelHistoryFilename solutionStatistics
+if len(sys.argv) != 5:
+    print("Usage: python main.py inputStateFilename resultSwipesFilename travelHistoryFilename solutionStatistics")
+    exit(-1)
 
-print(len(sys.argv))
+inputStateFilename = sys.argv[1]
+resultSwipesFilename = sys.argv[2]
+travelHistoryFilename = sys.argv[3]
+solutionStatistics = sys.argv[4]
 
-print(f"Reading from:{sys.argv[1]}")
+
+print(f"Reading from:{inputStateFilename}")
 gameState = GameState(sys.argv[1])
-with open('travel-history.txt', 'wt') as fp:
+
+start = time.time()
+with open(travelHistoryFilename, 'wt') as fp:
     (solutionFound, path, nodesVisited) = solve(gameState.equations, gameState.variablesWithPos.symbols, fp)
+end = time.time()
+sTimeMs = round((end-start)*1000)
+print(f"Solution found in {sTimeMs}ms")
 
 print (f"nodesVisited: {nodesVisited}")    
 # store in image coordinates for applying to device and renderer
 if solutionFound:
-    with open('swipes.csv', 'wt') as fp:
+    newFile = not Path(solutionStatistics).exists()
+    with open(solutionStatistics, 'at') as fp:
+        if newFile:
+            fp.write("inputStateFilename, sTimeMs, nodesVisited, #Equations, #symbols\n")
+        fp.write(f"{inputStateFilename}, {sTimeMs}, {nodesVisited}, {len(gameState.equations)}, {len(gameState.inputOptions)}\n")
+
+    with open(resultSwipesFilename, 'wt') as fp:
         fp.write(f"src_r, src_c, dst_r, dst_c\n")
         path.reverse()
         for action in path:

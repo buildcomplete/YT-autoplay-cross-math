@@ -14,13 +14,20 @@ fdisp(fid, size(variables_with_pos,1));
 fdisp(fid, variables_with_pos);
 
 fdisp(fid, "fieldCenters_r=");
-fdisp(fid, fieldCenters_r+ p_b(1));
+fprintf(fid, '%d ', fieldCenters_r + p_b(1));
+fprintf(fid, '\n');  % Add a newline after each row
+
 fdisp(fid, "fieldCenters_c=");
-fdisp(fid, fieldCenters_c + p_b(2));
+fprintf(fid, '%d ', fieldCenters_c + p_b(2));
+fprintf(fid, '\n');  % Add a newline after each row
 
 fdisp(fid, "varCenters_r=");
-fdisp(fid, varRowIdx+ v_b(1));
+fprintf(fid, '%d ',varRowIdx+ v_b(1));
+fprintf(fid, '\n');  % Add a newline after each row
+
 fdisp(fid, "varCenters_c=");
-fdisp(fid, varColIdx + v_b(2));
+fprintf(fid, '%d ', varColIdx + v_b(2));
+fprintf(fid, '\n');  % Add a newline after each row
+
 
 fclose (fid);
