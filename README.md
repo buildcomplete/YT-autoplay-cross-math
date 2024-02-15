@@ -32,13 +32,13 @@ flowchart LR
 Step0(Detect top and bottom)-->Step0_2(Refine by removing text and circles)-->TopGridDetect(Find top Grid)-->TopGridClassify(Classify Top grid)-->TopGridRecognize(Read symbols and operators)
 Step0_2-->DetectBottomGrid(Find bottom Grid)-->ReadSymbols(Read symbols)
 ```
+[Image Processing Detailed Flow](image-processing-detailed-flow.md)
 
 ## [step0_segment_areas.m](./YTACM-EYE/app/step0_segment_areas.m)
 ### Detect top and bottom:
 ![Detect top and bottom](./YTACM-EYE/doc/step0_fig1.png)
 ### Refine by removing text and circles 
 ![Detect top and bottom](./YTACM-EYE/doc/step0_fig2.png)
-![Detect top and bottom](./YTACM-EYE/doc/step0_fig3.png)
 
 ## [step1_find_playfield_method2.m](./YTACM-EYE/app/step1_find_playfield_method2.m)
 ### Find top grid
@@ -116,6 +116,30 @@ variables_with_pos=
 2,3:27
 ```
 
+# Detailed block diagram outlining the analysis
+
+```mermaid
+flowchart TD
+Start-->
+ReadImage("Readimage(Filename) as grayscale")-->
+SampleColorValue("Sample color value(left side+marging, center row)")
+
+ReadImage-->treshold
+SampleColorValue-->treshold(treshold)
+
+subgraph segmentation
+SampleColorValue
+treshold("Treshold using compare + noise removal")-->
+detect_lines("Detect lines, type: horizontal, ... ")
+detect_lines-->split_image("Select ROIs, upper and lower, line 2-3, line 4-5, and margin")
+ReadImage-->split_image
+split_image-->Roi1
+split_image-->Roi2
+Roi1("Roi1 playfield")-->refine_lines1("Refine roi, search from top")
+Roi2("Roi2 variables")-->refine_lines2("Refine roi, search from bottom")
+end
+```
+
 # Brain
 The brain🧠 is used to solve the puzzle🧩 
 
@@ -128,10 +152,10 @@ The brain🧠 is used to solve the puzzle🧩
 Selecting according to the lowest level of freedom has a huge effect, the following table shows how the number of visited nodes increased exponentially.
 | **Category** | **worst** | **no sorting** | **optimized** | **# variables** |
 |--------------|-----------|----------------|---------------|-----------------|
-| **expert**   | 2894664   | 854            | 169           | 18              |
-| **difficult**| 1747695   | 2336           | 108           | 14              |     
-| **medium**   | 3925      | 183            | 40            | 14              |     
-| **easy**     | 44        | 44             | 20            | 8               |     
+| **expert**   | 2894674   | 864            | 179           | 18              |
+| **difficult**| 14698240  | 468           | 237           | 14              |     
+| **medium**   | 3933      | 468            | 48            | 14              |     
+| **easy**     | 49        | 44             | 25            | 8               |     
 
 ![Sorting effect](./YTACM-EYE/doc/sorting_effect.png)
 
@@ -156,7 +180,7 @@ sys     0m0.023s
 
 The following diagram shows the path traversed to find the solution
 ```mermaid
-flowchart TD
+flowchart LR
 root-->L1_3p18e7("L1 3+18=7")
 L1_3p18e7("L1 3+18=7")-->root
 root-->L1_3p25e7("L1 3+25=7")

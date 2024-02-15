@@ -25,13 +25,24 @@ if plotOn
   hold on;
   plot( idxCols, ones(1,length(idxCols)) .* size(maskOne,1)/2 , 'r+');
   plot( ones(1,length(idxRows)) .* size(maskOne,2)/2, idxRows , 'g+');
+  xticks(idxCols)
+  yticks([idxRows(1) (idxRows(2)+idxRows(3))/2 idxRows(end-2)] )
 
   subplot(2,2,2);
   plot(transRows, 1:length(transRows));
   axis("ij");
+  xlim([0 size(maskOne,2)]);
+  ylim([0 size(maskOne,1)]);
+  xticks(idxCols)
+  yticks([idxRows(1) (idxRows(2)+idxRows(3))/2 idxRows(end-2)] )
 
   subplot(2,2,3);
   plot(transCols);
+  axis("ij");
+  xlim([0 size(maskOne,2)]);
+  ylim([0 size(maskOne,1)]);
+  xticks(idxCols)
+  yticks([idxRows(1) (idxRows(2)+idxRows(3))/2 idxRows(end-2)] )
 end
 
 % extract playfield and variables
@@ -52,17 +63,21 @@ varifieldMaskCols = sum(varifieldMask,2) ;
 
 if plotOn
   figure;
-  subplot(2,2,1);
+  subplot(2,3,1);
   imagesc(playfieldMask)
-  subplot(2,2,2);
+  axis off
+  subplot(2,3,2);
   plot( playfieldMaskCols, 1:length(playfieldMaskCols));
   axis("ij");
+  axis off
 
-  subplot(2,2,3);
+  subplot(2,3,4);
   imagesc(varifieldMask)
-  subplot(2,2,4);
+  axis off
+  subplot(2,3,5);
   plot( varifieldMaskCols, 1:length(varifieldMaskCols));
   axis("ij");
+  axis off
 end
 
 foundDip = false;
@@ -91,9 +106,8 @@ end
 variables=variables(1:i,:);
 
 if plotOn
-  figure
-  subplot(1,2,1);
+  subplot(2,3,3);
   imshow(playfield)
-  subplot(1,2,2);
+  subplot(2,3,6);
   imshow(variables)
 end

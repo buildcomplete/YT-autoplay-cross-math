@@ -24,9 +24,7 @@ with open(travelHistoryFilename, 'wt') as fp:
     (solutionFound, path, nodesVisited) = solve(gameState.equations, gameState.variablesWithPos.symbols, fp)
 end = time.time()
 sTimeMs = round((end-start)*1000)
-print(f"Solution found in {sTimeMs}ms")
 
-print (f"nodesVisited: {nodesVisited}")    
 # store in image coordinates for applying to device and renderer
 if solutionFound:
     newFile = not Path(solutionStatistics).exists()
