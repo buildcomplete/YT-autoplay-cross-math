@@ -148,6 +148,15 @@ The brain🧠 is used to solve the puzzle🧩
 - Step3, Map variables in equations to coordinate system
 - Set variables and test for validity, **select equations according to lowest level of freedom to limit test space**
 
+```mermaid
+flowchart LR
+subgraph Contextualize
+    Reconstruct("reconstruct equations using neighbourhood")
+end
+
+Load-->Contextualize-->Solve
+```
+
 ### Optimization note
 Selecting according to the lowest level of freedom has a huge effect, the following table shows how the number of visited nodes increased exponentially.
 | **Category** | **worst** | **no sorting** | **optimized** | **# variables** |
