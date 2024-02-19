@@ -13,7 +13,7 @@ else
     plotOn = false;
 end
 
-
+disp(['Eye : ' imageFilename])
 %img = rgb2gray(imread('images/Screenshot_20240106_134529_Cross Math.jpg'));
 close all;
 img = rgb2gray(imread(imageFilename));
