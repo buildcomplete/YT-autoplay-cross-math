@@ -24,7 +24,8 @@ function symbolIdx = sub_find_symbols(I, symbolLib)
       # and impact aspect ratio
       # The aspect ratio goes toward 1 as image size goes towards 0
       # Still a bit puzzled, since I do remove the padding in the comparison
-      aspectOk = (max([arT arI]) / min([arT arI])) < 1.25; % Aspect ratio of symbol must be similar%
+      aspectmatch = max([arT arI]) / min([arT arI]);
+      aspectOk = (aspectmatch) < 1.25; % Aspect ratio of symbol must be similar%
       T_Diag = sqrt(sum(bboxT.^2));
       I_Diag = sqrt(sum(bboxI.^2));
       scaleFactor = I_Diag / T_Diag;
@@ -32,6 +33,7 @@ function symbolIdx = sub_find_symbols(I, symbolLib)
     else  % If multiple symbols (numbers), all can be scaled according to height
       q=size(T,1)-6;
       scaleFactor =  (symRowIdx(2)-symRowIdx(1)-6) / (q);
+      aspectmatch=1;
     endif
 
     if not(aspectOk)
@@ -46,7 +48,7 @@ function symbolIdx = sub_find_symbols(I, symbolLib)
       energy = imsmooth(energy, "Gaussian");
       % padding was applied, remove this from result
       crap =  floor((size(energy) - size(I)) ./ 2);
-      energy = energy(crap(1):(size(I,1)+crap(1)), crap(2):(size(I,2)+crap(2)));
+      energy = energy(crap(1):(size(I,1)+crap(1)), crap(2):(size(I,2)+crap(2)))/aspectmatch;
     endif
 
     cR = floor(mean(symRowIdx));

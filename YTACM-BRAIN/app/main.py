@@ -45,3 +45,6 @@ if solutionFound:
             src_c = gameState.symbolMappingC[symC-1]
             
             fp.write(f"{src_r}, {src_c}, {dst_r}, {dst_c}\n")
+    print(f"Saved solution to:{resultSwipesFilename}")
+else:
+    print("No solution found")
