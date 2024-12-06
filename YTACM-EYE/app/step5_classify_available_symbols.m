@@ -8,6 +8,8 @@
 wh = (rectSize / 2) - 5;
 variables_with_pos = "";
 
+rSymLib = symbolLib([1:10 18]);
+rSymNames = symbolNames([1:10 18]);
 for idR = 1:length(varRowIdx)
   for idC = 1:length(varColIdx)
     if (varIndexEnergy(idR, idC) > 0)
@@ -19,8 +21,8 @@ for idR = 1:length(varRowIdx)
       I = variables(r1:r2, c1:c2);
       B = (1 - (I < I(1)-10)) .* 255; % Remove shadow noise by binarization, assuming dark letter on brighter bg
 
-      sIds = sub_find_symbols(B, symbolLib(1:10));
-      variables_with_pos = [variables_with_pos; sprintf("%d,%d:%s", idR, idC, symbolNames(sIds))];
+      sIds = sub_find_symbols(B, rSymLib);
+      variables_with_pos = [variables_with_pos; sprintf("%d,%d:%s", idR, idC, rSymNames(sIds))];
     endif
   end
 end

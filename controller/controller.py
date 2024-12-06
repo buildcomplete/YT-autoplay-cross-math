@@ -34,11 +34,11 @@ for line in swipe_file:
     clickTwo = f'adb shell input tap {src_c} {src_r}'
     print(clickOne)
     subprocess.run(clickOne, shell=True, check=True)
-    time.sleep(1)
+    time.sleep(0.5)
     
     print(clickTwo)
     subprocess.run(clickTwo, shell=True, check=True)
-    time.sleep(2)
+    time.sleep(0.5)
 
 # Close the swipe file
 swipe_file.close()
