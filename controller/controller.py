@@ -32,7 +32,7 @@ for line in swipe_file:
     clickOne = f'adb shell input tap {dst_c} {dst_r}'
     clickTwo = f'adb shell input tap {src_c} {src_r}'
     subprocess.run(clickOne, shell=True, check=True)
-    time.sleep(0.1)
+    time.sleep(0.5)
     subprocess.run(clickTwo, shell=True, check=True)
     time.sleep(1)
 

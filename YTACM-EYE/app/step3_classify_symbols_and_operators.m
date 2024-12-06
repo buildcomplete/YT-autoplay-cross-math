@@ -5,7 +5,7 @@
 % field types, 0=bg, 1=input, 2= symbol or operator
 
 % Load symbol library
-symbolNames = "0123456789+-/x=";
+symbolNames = "0123456789+-/x=-";
 symbolLib = cell(14,1);
 for sId = 0:9
   symbolLib{sId+1} = imread(sprintf('symbols/%d.png', sId)) > 128;
@@ -15,6 +15,7 @@ symbolLib{12} = imread(sprintf('operators/%s.png', 'minus')) > 128;
 symbolLib{13} = imread(sprintf('operators/%s.png', 'div')) > 128;
 symbolLib{14} = imread(sprintf('operators/%s.png', 'mult')) > 128;
 symbolLib{15} = imread(sprintf('operators/%s.png', 'equals')) > 128;
+symbolLib{16} = imread(sprintf('operators/%s.png', 'new_minus')) > 128;
 
 
 imgS = playfield;

@@ -48,7 +48,7 @@ end
 % Check if there was any borders on the sides,
 % if not set the indexes to include all
 if (length(idxCols) < 2)
-  idxCols = [1 size(img,2)]
+  idxCols = [1 size(img,2)];
 end
 
 % extract playfield and variables
