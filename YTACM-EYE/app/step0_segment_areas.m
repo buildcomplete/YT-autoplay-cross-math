@@ -45,6 +45,12 @@ if plotOn
   yticks([idxRows(1) (idxRows(2)+idxRows(3))/2 idxRows(end-2)] )
 end
 
+% Check if there was any borders on the sides,
+% if not set the indexes to include all
+if (length(idxCols) < 2)
+  idxCols = [1 size(img,2)]
+end
+
 % extract playfield and variables
 pad = 15;
 playfield = img((idxRows(1)+pad):(idxRows(2)-pad), (idxCols(1)+pad:idxCols(2)-pad));
