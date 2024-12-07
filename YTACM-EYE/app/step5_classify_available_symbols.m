@@ -5,7 +5,7 @@
 % rectSize % rectSize
 % varIndexEnergy % the energy at a specific index, if zero the is no variable at the entry
 
-wh = (rectSize / 2) - 5;
+wh = (rectSize / 2) - 11;
 variables_with_pos = "";
 
 rSymLib = symbolLib([1:10 18]);

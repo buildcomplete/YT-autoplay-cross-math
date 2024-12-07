@@ -39,9 +39,3 @@ step5_classify_available_symbols
 % variables_with_pos contains avaliable variables
 
 step6_write_output
-
-
-
-
-
-

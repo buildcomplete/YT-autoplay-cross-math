@@ -26,6 +26,11 @@ function symbolIdx = sub_find_symbols(I, symbolLib)
       # Still a bit puzzled, since I do remove the padding in the comparison
       aspectmatch = max([arT arI]) / min([arT arI]);
       aspectOk = (aspectmatch) < 1.25; % Aspect ratio of symbol must be similar%
+
+      % Minus hack
+      if (arI< 0.7 && arT < 0.7)
+        aspectOk = true;
+      endif
       T_Diag = sqrt(sum(bboxT.^2));
       I_Diag = sqrt(sum(bboxI.^2));
       scaleFactor = I_Diag / T_Diag;

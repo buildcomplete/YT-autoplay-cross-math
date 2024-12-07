@@ -5,7 +5,7 @@
 % field types, 0=bg, 1=input, 2= symbol or operator
 
 % Load symbol library
-symbolNames = "0123456789+-/x=-=8";
+symbolNames = "0123456789+-/x=-=8x/";
 symbolLib = cell(14,1);
 for sId = 0:9
   symbolLib{sId+1} = imread(sprintf('symbols/%d.png', sId)) > 128;
@@ -18,6 +18,8 @@ symbolLib{15} = imread(sprintf('operators/%s.png', 'equals')) > 128;
 symbolLib{16} = imread(sprintf('operators/%s.png', 'new_minus')) > 128;
 symbolLib{17} = imread(sprintf('operators/%s.png', 'new_equals')) > 128;
 symbolLib{18} = imread(sprintf('symbols/%s.png', 'new_8')) > 128;
+symbolLib{19} = imread(sprintf('operators/%s.png', 'new_mult')) > 128;
+symbolLib{20} = imread(sprintf('operators/%s.png', 'new_div')) > 128;
 
 
 imgS = playfield;
@@ -38,6 +40,9 @@ for idR = 1:size(fieldTypes,1)
       img = img(:,img(1,:)==mode(img(1,:)));
 
       symbolLibIdx = sub_find_symbols(img, symbolLib);
+      if (symbolLibIdx==0)
+        disp(sprintf( "Failed finding symbol at %d,%d:%d", idR, idC, symbolLibIdx))
+      endif
       x = sprintf( "%d,%d:%s", idR, idC, symbolNames( symbolLibIdx ) );
       symbolsAtPositions = [symbolsAtPositions;x];
 
