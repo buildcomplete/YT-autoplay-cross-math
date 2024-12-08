@@ -8,8 +8,8 @@
 wh = (rectSize / 2) - 1;
 variables_with_pos = "";
 
-rSymLib = symbolLib([1:10 18]);
-rSymNames = symbolNames([1:10 18]);
+rSymLib = symbolLib([1:10 18 21]);
+rSymNames = symbolNames([1:10 18 21]);
 for idR = 1:length(varRowIdx)
   for idC = 1:length(varColIdx)
     if (varIndexEnergy(idR, idC) > 0)

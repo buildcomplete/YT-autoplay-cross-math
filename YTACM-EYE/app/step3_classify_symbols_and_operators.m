@@ -5,8 +5,8 @@
 % field types, 0=bg, 1=input, 2= symbol or operator
 
 % Load symbol library
-symbolNames = "0123456789+-/x=-=8x/";
-symbolLib = cell(14,1);
+symbolNames = "0123456789+-/x=-=8x/3";
+symbolLib = cell(21,1);
 for sId = 0:9
   symbolLib{sId+1} = imread(sprintf('symbols/%d.png', sId)) > 128;
 endfor
@@ -20,6 +20,7 @@ symbolLib{17} = imread(sprintf('operators/%s.png', 'new_equals')) > 128;
 symbolLib{18} = imread(sprintf('symbols/%s.png', 'new_8')) > 128;
 symbolLib{19} = imread(sprintf('operators/%s.png', 'new_mult')) > 128;
 symbolLib{20} = imread(sprintf('operators/%s.png', 'new_div')) > 128;
+symbolLib{21} = imread(sprintf('symbols/%s.png', 'new_3')) > 128;
 
 
 imgS = playfield;
