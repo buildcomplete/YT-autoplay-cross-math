@@ -26,19 +26,19 @@ subprocess.run(python_command, shell=True, check=True)
 
 
 # Read the swipes in the swipe file and send them
-swipe_file = open("../shared/results/x.swipe", "r")
-next(swipe_file)  # Skip the first line
-for line in swipe_file:
-    src_r, src_c, dst_r, dst_c = map(int, line.strip().split(","))
-    clickOne = f'adb shell input tap {dst_c} {dst_r}'
-    clickTwo = f'adb shell input tap {src_c} {src_r}'
-    print(clickOne)
-    subprocess.run(clickOne, shell=True, check=True)
-    time.sleep(0.3)
-    
-    print(clickTwo)
-    subprocess.run(clickTwo, shell=True, check=True)
-    time.sleep(0.3)
+with  open("../shared/results/x.swipe", "r") as swipe_file:
+    next(swipe_file)  # Skip the first line
+    for line in swipe_file:
+        src_r, src_c, dst_r, dst_c = map(int, line.strip().split(","))
+        clickOne = f'adb shell input tap {dst_c} {dst_r}'
+        clickTwo = f'adb shell input tap {src_c} {src_r}'
+        print(clickOne)
+        subprocess.run(clickOne, shell=True, check=True)
+        time.sleep(0.3)
+        
+        print(clickTwo)
+        subprocess.run(clickTwo, shell=True, check=True)
+        time.sleep(0.3)
 
-# Close the swipe file
-swipe_file.close()
+# Delete the file after it has been processed
+os.remove("../shared/results/x.swipe")
