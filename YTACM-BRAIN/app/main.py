@@ -46,5 +46,7 @@ if solutionFound:
             
             fp.write(f"{src_r}, {src_c}, {dst_r}, {dst_c}\n")
     print(f"Saved solution to:{resultSwipesFilename}")
+    sys.exit(0)
 else:
     print("No solution found")
+    sys.exit(1)
