@@ -11,7 +11,7 @@ if nargin == 3
 else
     imageFilenameA = '../../shared/ad_trans_x.png';
     resultFilename = 'adv_check.txt';
-    plotOn = false;
+    plotOn = true;
 end
 
 disp(['Adv check A : ' imageFilenameA]);
@@ -28,13 +28,16 @@ BR = conv(BR, ones(11,1)./11);
 BR = conv(BR, ones(11,1)./11);
 [pksBN, locBN, extra] = findpeaks(BR, "MinPeakHeight", 0.9, "MinPeakWidth", 100);
 
+fid = fopen (resultFilename, "w");
+
 if (pksBN >= 1 )
   disp("We have next level blue button")
-  fid = fopen (resultFilename, "w");
   fprintf(fid, 'bluenext\n');
   fprintf(fid, '%d %d\n', locBN, size(XA,2)/2);
-  fclose (fid);
+else
+  fprintf(fid, 'none\n');
 end
+fclose (fid);
 
 % Check if we have
 
