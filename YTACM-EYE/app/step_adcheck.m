@@ -9,7 +9,7 @@ if nargin == 3
     resultFilename = arg_list{2};
     plotOn = arg_list{3} == "1";
 else
-    imageFilenameA = '../../shared/test_data/cut_scenes/ad_trans_arrow2.png';
+    imageFilenameA = '../../shared/test_data/cut_scenes/ad_trans_x3.png';
     resultFilename = 'adv_check.txt';
     plotOn = true;
 end
@@ -17,14 +17,17 @@ end
 disp(['Adv check A : ' imageFilenameA]);
 XA = imread(imageFilenameA);
 T_x1 = imread('cutscenes/adv_X.png');
+T_x2 = imread('cutscenes/adv_X2.png');
 T_a1 = imread('cutscenes/adv_arrow1.png');
 T_a2 = imread('cutscenes/adv_arrow2.png');
 
-XA_white = rgb2gray(XA) > 200;
+XA_white = rgb2gray(XA) > 180;
 R_x1 = xcorr2(XA_white, T_x1, "coeff");
+R_x2 = xcorr2(XA_white, T_x2, "coeff");
 R_a1 = xcorr2(XA_white, T_a1, "coeff");
 R_a2 = xcorr2(XA_white, T_a2, "coeff");
-[val_x, idx_x] = max(R_x1(:));
+[val_x1, idx_x1] = max(R_x1(:));
+[val_x2, idx_x2] = max(R_x2(:));
 [val_a1, idx_a1] = max(R_a1(:));
 [val_a2, idx_a2] = max(R_a2(:));
 
@@ -51,8 +54,10 @@ end
 
 fid = fopen (resultFilename, "w");
 
-if (val_x > 0.99)
-  saveHit(fid, "adv_next", idx_x, R_x1, T_x1)
+if (val_x1 > 0.99)
+  saveHit(fid, "adv_next", idx_x1, R_x1, T_x1)
+elseif (val_x2 > 0.85 )
+  saveHit(fid, "adv_next", idx_x2, R_x2, T_x2)
 elseif (val_a1 > 0.95 )
   saveHit(fid, "adv_next", idx_a1, R_a1, T_a1)
 elseif (val_a2 > 0.95 )

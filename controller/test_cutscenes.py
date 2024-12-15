@@ -5,7 +5,10 @@ import Command
 expectations = {
     'ad_trans_arrow.png': ("adv_next", (150, 83)),
     'ad_trans_arrow2.png': ("adv_next", (150, 1023)),
+    'ad_trans_arrow3.png': ("adv_next", (150, 1023)),
     'ad_trans_x.png': ("adv_next", (150, 1000)),
+    'ad_trans_x2.png': ("adv_next", (156, 80)),
+    'ad_trans_x3.png': ("adv_next", (143, 1020)),
     'adck.png': ("none",(0,0)),
     'complte_next.png': ("bluenext", (1972, 540)),
 }
@@ -37,15 +40,14 @@ for filename, expectation in expectations.items():
     
     # Run the Octave command
     subprocess.run(octave_command, shell=True, check=True)
-    with  open(testfileresult_host, "r") as fHandle:
-        lines = [line.strip() for line in fHandle]
-        command = Command.Command(lines)
-        
-        print(f'Expection: {expectation}, Actual: {command.commandName} {command.tabPosition}')
-        if testCmdIsOk(expectation, command, 10 ):
-            print(GREEN + 'passed' + RESET)
-        else:
-            print(RED + 'failed' + RESET)
+    
+    command = Command.Command.CreateCommandFromOctaveFile(testfileresult_host)
+
+    print(f'Expection: {expectation}, Actual: {command.commandName} {command.tabPosition}')
+    if testCmdIsOk(expectation, command, 10 ):
+        print(GREEN + 'passed' + RESET)
+    else:
+        print(RED + 'failed' + RESET)
 
 
     

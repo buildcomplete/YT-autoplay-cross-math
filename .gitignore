@@ -9,3 +9,4 @@ YTACM-BRAIN/app/solution.stats
 YTACM-BRAIN/app/travel.hist
 YTACM-BRAIN/app/solvestate.xlsx
 YTACM-EYE/app/cross-math-scan-result.txt
+controller/__pycache__/*
