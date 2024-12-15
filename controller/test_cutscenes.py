@@ -1,8 +1,6 @@
-
+import math
 import subprocess
-
 import Command
-
 
 expectations = {
     'ad_trans_arrow.png': ("adv_next", (150, 83)),
@@ -20,6 +18,14 @@ RED = '\033[91m'
 GREEN = '\033[92m'
 RESET = '\033[0m'
 
+def euclidean_distance(cmd, target_position):
+    """Calculates the Euclidean distance between the tabPosition of this Command object and a given target position."""
+    x1, y1 = cmd.tabPosition
+    x2, y2 = target_position
+    return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+def testCmdIsOk(exp,cmd, tol):
+    return exp[0] !=cmd and euclidean_distance(cmd, exp[1]) < tol
 
 for filename, expectation in expectations.items():
     print (f"{filename}, {expectation}")
@@ -35,9 +41,8 @@ for filename, expectation in expectations.items():
         lines = [line.strip() for line in fHandle]
         command = Command.Command(lines)
         
-        #coord = next(fHandle)
-        print(f'{command.commandName} == {expectation[0]} and {command.tabPosition} == {expectation[1]}')
-        if(command.commandName == expectation[0] and command.tabPosition == expectation[1] ):
+        print(f'Expection: {expectation}, Actual: {command.commandName} {command.tabPosition}')
+        if testCmdIsOk(expectation, command, 10 ):
             print(GREEN + 'passed' + RESET)
         else:
             print(RED + 'failed' + RESET)

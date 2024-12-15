@@ -9,7 +9,7 @@ if nargin == 3
     resultFilename = arg_list{2};
     plotOn = arg_list{3} == "1";
 else
-    imageFilenameA = '../../shared/ad_trans_x.png';
+    imageFilenameA = '../../shared/test_data/cut_scenes/ad_trans_arrow2.png';
     resultFilename = 'adv_check.txt';
     plotOn = true;
 end
@@ -18,12 +18,15 @@ disp(['Adv check A : ' imageFilenameA]);
 XA = imread(imageFilenameA);
 T_x1 = imread('cutscenes/adv_X.png');
 T_a1 = imread('cutscenes/adv_arrow1.png');
+T_a2 = imread('cutscenes/adv_arrow2.png');
 
 XA_white = rgb2gray(XA) > 200;
 R_x1 = xcorr2(XA_white, T_x1, "coeff");
 R_a1 = xcorr2(XA_white, T_a1, "coeff");
+R_a2 = xcorr2(XA_white, T_a2, "coeff");
 [val_x, idx_x] = max(R_x1(:));
 [val_a1, idx_a1] = max(R_a1(:));
+[val_a2, idx_a2] = max(R_a2(:));
 
 
 
@@ -38,18 +41,22 @@ BR = conv(BR, ones(11,1)./11);
 BR = conv(BR, ones(11,1)./11);
 [pksBN, locBN, extra] = findpeaks(BR, "MinPeakHeight", 0.9, "MinPeakWidth", 100);
 
-function saveHit(fhandle, name, idx, R)
+function saveHit(fhandle, name, idx, R, T)
    fprintf(fhandle, sprintf('%s\n', name));
-   [r,c] = ind2sub(size(R), idx)
-  fprintf(fhandle, '%d %d\n', r, c);
+   [r,c] = ind2sub(size(R), idx);
+   [tr tc]=size(T);
+
+  fprintf(fhandle, '%d %d\n', floor(r-tr/2), floor(c-tr/2));
 end
 
 fid = fopen (resultFilename, "w");
 
 if (val_x > 0.99)
-  saveHit(fid, "adv_next", idx_x, R_x1)
-elseif (val_a1 > 0.99 )
-  saveHit(fid, "adv_next", idx_a1, R_a1)
+  saveHit(fid, "adv_next", idx_x, R_x1, T_x1)
+elseif (val_a1 > 0.95 )
+  saveHit(fid, "adv_next", idx_a1, R_a1, T_a1)
+elseif (val_a2 > 0.95 )
+  saveHit(fid, "adv_next", idx_a2, R_a2, T_a2)
 elseif (pksBN >= 1 )
   disp("We have next level blue button")
   fprintf(fid, 'bluenext\n');
@@ -59,5 +66,4 @@ else
 end
 fclose (fid);
 
-% Check if we have
 
