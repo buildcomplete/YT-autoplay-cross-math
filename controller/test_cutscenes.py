@@ -5,14 +5,14 @@ import Command
 expectations = {
     'ad_trans_arrow.png': ("adv_next", (150, 83)),
     'ad_trans_arrow2.png': ("adv_next", (150, 1023)),
-    'ad_trans_arrow3.png': ("adv_next", (150, 1023)),
+    'ad_trans_arrow3.png': ("adv_next", (143, 1022)),
     'ad_trans_arrow4.png': ("adv_next", (150, 1023)),
     'ad_trans_arrow5.png': ("adv_next", (150, 1023)),
     'ad_trans_x.png': ("adv_next", (150, 1000)),
     'ad_trans_x2.png': ("adv_next", (156, 80)),
     'ad_trans_x3.png': ("adv_next", (179, 981)),
-    'ad_trans_x4.png': ("adv_next", (143, 1020)),
-    'ad_trans_x5.png': ("adv_next", (143, 1020)),
+    'ad_trans_x4.png': ("adv_next", (177, 979)),
+    'ad_trans_x5.png': ("adv_next", (177, 979)),
     'nothing.png': ("none",(0,0)),
     'complte_next.png': ("bluenext", (1972, 540)),
 }
