@@ -16,8 +16,7 @@ def adbClick(x,y):
 def grabAndSolvePuzzle():
     # Take a screenshot with a random name
     screenshot_id = random.randint(1000, 9999)
-    screenshot_name = f"screenshot_{screenshot_id}.png"
-    screenshot_path = os.path.join("/sdcard", screenshot_name)
+    screenshot_name = f"scrcoeenshot_{screenshot_id}.png"
 
     # Transfer the screenshot to the local computer
     local_screenshot_path = os.path.join("../shared/new", screenshot_name)
@@ -76,8 +75,15 @@ def tryPassAdv():
     # Return true if this is the blue button that completes the advertisement loop
     return (command.commandName == 'bluenext')
 
-while (True):
-    grabAndSolvePuzzle()
-    while(False == tryPassAdv()):
-        time.sleep(1)
-    time.sleep(1)
+solverErrorsInRow=0
+while (solverErrorsInRow < 3):
+    try:
+        grabAndSolvePuzzle()
+        solverErrorsInRow=0
+    except:
+        solverErrorsInRow=solverErrorsInRow+1
+
+    end_time = time.time() + 120 - solverErrorsInRow * 30
+    while(False == tryPassAdv() and end_time > time.time()):
+        time.sleep(0.3)
+    time.sleep(1.5)

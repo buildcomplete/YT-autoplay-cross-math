@@ -9,7 +9,7 @@ if nargin == 3
     resultFilename = arg_list{2};
     plotOn = arg_list{3} == "1";
 else
-    imageFilenameA = '../../shared/test_data/cut_scenes/ad_trans_x5.png';
+    imageFilenameA = '../../shared/test_data/cut_scenes/ad_trans_x.png';
     resultFilename = 'adv_check.txt';
     plotOn = true;
 end
@@ -33,23 +33,23 @@ T_a1 = imread('cutscenes/adv_arrow1.png');
 T_a2 = imread('cutscenes/adv_arrow2.png');
 T_a3g = binGradX(T_a2, 0.5);
 
-
+function [eMax r c] = symbolMaxInRoi(X, T, r1,c1, r2, c2)
+  R = xcorr2(X(r1:r2,c1:c2), T, "coeff");
+  [eMax, idx] = max(R(:));
+  [r,c] = ind2sub(size(R), idx);
+  r = floor(r-size(T,1)/2)+r1;
+  c = floor(c-size(T,2)/2)+c1;
+end
 
 XA_white = rgb2gray(XA) > 180; # Old method, works with white on black
 XAbingrad = binGradX(XA, 20); # new method to detect white on white using gradient
-R_x1 = xcorr2(XA_white, T_x1, "coeff");
-R_x2 = xcorr2(XA_white, T_x2, "coeff");
-R_x3g = xcorr2(XAbingrad, T_x3g, "coeff");
-R_a1 = xcorr2(XA_white, T_a1, "coeff");
-R_a2 = xcorr2(XA_white, T_a2, "coeff");
-R_a3g = xcorr2(XAbingrad, T_a3g, "coeff");
-[val_x1, idx_x1] = max(R_x1(:));
-[val_x2, idx_x2] = max(R_x2(:));
-[val_x3, idx_x3] = max(R_x3g(:));
-[val_a1, idx_a1] = max(R_a1(:));
-[val_a2, idx_a2] = max(R_a2(:));
-[val_a3, idx_a3] = max(R_a3g(:));
 
+[val_x1, r_x1, c_x1] = symbolMaxInRoi(XA_white, T_x1, 50, 1, 250, size(XA_white,2));
+[val_x2, r_x2, c_x2] = symbolMaxInRoi(XA_white, T_x2, 50, 1, 250, size(XA_white,2));
+[val_x3, r_x3, c_x3] = symbolMaxInRoi(XAbingrad, T_x3g, 50, 1, 250, size(XA_white,2));
+[val_a1, r_a1, c_a1] = symbolMaxInRoi(XA_white, T_a1, 50, 1, 250, size(XA_white,2));
+[val_a2, r_a2, c_a2] = symbolMaxInRoi(XA_white, T_a2, 50, 1, 250, size(XA_white,2));
+[val_a3, r_a3, c_a3] = symbolMaxInRoi(XAbingrad, T_a3g, 50, 1, 250, size(XA_white,2));
 
 % Check if we have next level blue button
 targetBlue = [92, 131, 228];
@@ -62,28 +62,25 @@ BR = conv(BR, ones(11,1)./11);
 BR = conv(BR, ones(11,1)./11);
 [pksBN, locBN, extra] = findpeaks(BR, "MinPeakHeight", 0.9, "MinPeakWidth", 100);
 
-function saveHit(fhandle, name, idx, R, T)
-   fprintf(fhandle, sprintf('%s\n', name));
-   [r,c] = ind2sub(size(R), idx);
-   [tr tc]=size(T);
-
-  fprintf(fhandle, '%d %d\n', floor(r-tr/2), floor(c-tr/2));
+function saveHit2(fhandle, name, r,c)
+  fprintf(fhandle, sprintf('%s\n', name));
+  fprintf(fhandle, '%d %d\n', r, c);
 end
 
 fid = fopen (resultFilename, "w");
 
 if (val_x1 > 0.99)
-  saveHit(fid, "adv_next", idx_x1, R_x1, T_x1)
+  saveHit2(fid, "adv_next", r_x1, c_x1);
 elseif (val_x2 > 0.85 )
-  saveHit(fid, "adv_next", idx_x2, R_x2, T_x2)
+  saveHit2(fid, "adv_next", r_x2, c_x2);
 elseif (val_x3 > 0.78 )
-  saveHit(fid, "adv_next", idx_x3, R_x3g, T_x3g)
+  saveHit2(fid, "adv_next", r_x3, c_x3);
 elseif (val_a1 > 0.95 )
-  saveHit(fid, "adv_next", idx_a1, R_a1, T_a1)
+  saveHit2(fid, "adv_next", r_a1, c_a1);
 elseif (val_a2 > 0.95 )
-  saveHit(fid, "adv_next", idx_a2, R_a2, T_a2)
+  saveHit2(fid, "adv_next", r_a2, c_a2);
 elseif (val_a3 > 0.80 )
-  saveHit(fid, "adv_next", idx_a3, R_a3g, T_a3g)
+  saveHit2(fid, "adv_next", r_a3, c_a3);
 elseif (pksBN >= 1 )
   disp("We have next level blue button")
   fprintf(fid, 'bluenext\n');
