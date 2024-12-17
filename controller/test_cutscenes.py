@@ -15,7 +15,7 @@ expectations = {
     'ad_trans_x4.png': ("adv_next", (177, 979)),
     'ad_trans_x5.png': ("adv_next", (177, 979)),
     'ad_trans_x6.png': ("adv_next", (144, 1015)),
-    'ad_trans_x7.png': ("adv_next", (180, 90)),
+    'ad_trans_x7.png': ("adv_next", (170, 90)),
     'ad_trans_x8.png': ("adv_next", (39, 39)),
     'ad_trans_x9.png': ("adv_next", (142, 1020)),
     'nothing.png': ("none",(0,0)),
