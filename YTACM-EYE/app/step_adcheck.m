@@ -9,7 +9,7 @@ if nargin == 3
     resultFilename = arg_list{2};
     plotOn = arg_list{3} == "1";
 else
-    imageFilenameA = '../../shared/test_data/cut_scenes/ad_trans_x9.png';
+    imageFilenameA = '../../shared/test_data/cut_scenes/ad_trans_arrow7.png';
     resultFilename = 'adv_check.txt';
     plotOn = true;
 end
@@ -33,6 +33,7 @@ T_x4g = imread('cutscenes/adv_X4_grad.png');
 T_a1 = imread('cutscenes/adv_arrow1.png');
 T_a2 = imread('cutscenes/adv_arrow2.png');
 T_a3g = binGradX(T_a2, 0.5);
+T_a4 = imread('cutscenes/adv_arrow4.png');
 
 
 function [eMax r c] = symbolMaxInRoi(X, T, r1,c1, r2, c2)
@@ -51,12 +52,13 @@ XAbingrad = binGradX(XA, 20); # new method to detect white on white using gradie
 [val_x2, r_x2, c_x2] = symbolMaxInRoi(XA_white, T_x2, 10, 1, 250, size(XA_white,2));
 [val_xb1, r_xb1, c_xb1] = symbolMaxInRoi(XA_black, T_x1, 10, 1, 250, size(XA_white,2));
 [val_xb2, r_xb2, c_xb2] = symbolMaxInRoi(XA_black, T_x2, 10, 1, 250, size(XA_white,2));
-
 [val_x3, r_x3, c_x3] = symbolMaxInRoi(XAbingrad, T_x3g, 10, 500, 250, size(XA_white,2));
 [val_x4, r_x4, c_x4] = symbolMaxInRoi(XAbingrad, T_x4g, 100, 50, 250, size(XA_white,2));
+
 [val_a1, r_a1, c_a1] = symbolMaxInRoi(XA_white, T_a1, 50, 1, 250, size(XA_white,2));
 [val_a2, r_a2, c_a2] = symbolMaxInRoi(XA_white, T_a2, 50, 1, 250, size(XA_white,2));
 [val_a3, r_a3, c_a3] = symbolMaxInRoi(XAbingrad, T_a3g, 50, 500, 250, size(XA_white,2));
+[val_a4, r_a4, c_a4] = symbolMaxInRoi(XA_white, T_a4, 10, 10, 250, size(XA_white,2));
 
 % Check if we have next level blue button
 targetBlue = [92, 131, 228];
@@ -94,6 +96,8 @@ elseif (val_a2 > 0.90 )
   saveHit2(fid, "adv_next", r_a2, c_a2);
 elseif (val_a3 > 0.80 )
   saveHit2(fid, "adv_next", r_a3, c_a3);
+elseif (val_a4 > 0.80 )
+  saveHit2(fid, "adv_next", r_a4, c_a4);
 elseif (pksBN >= 1 )
   disp("We have next level blue button");
   saveHit2(fid, "bluenext", locBN, size(XA,2)/2);

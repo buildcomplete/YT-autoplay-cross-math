@@ -5,22 +5,23 @@ import shutil
 import sys
 import time
 import Command
+import datetime
 
-def grab(load_path):
+def grab(local_path):
     subprocess.run(["adb", "shell", "screencap", "-p", "/sdcard/autograb.png"], check=True)
-    subprocess.run(["adb", "pull", "/sdcard/autograb.png", load_path], check=True)
+    subprocess.run(["adb", "pull", "/sdcard/autograb.png", local_path], check=True)
 
 def adbClick(x,y):
     subprocess.run(f'adb shell input tap {x} {y}', shell=True, check=True)
 
-def grabAndSolvePuzzle():
-    # Take a screenshot with a random name
-    screenshot_id = random.randint(1000, 9999)
-    screenshot_name = f"scrcoeenshot_{screenshot_id}.png"
+def grabAndSolvePuzzle(run_id, step):
+
+    # Create the ID as a string
+    screenshot_name = f"{step}-crsmth.png"
 
     # Transfer the screenshot to the local computer
-    local_screenshot_path = os.path.join("../shared/new", screenshot_name)
-    docker_screenshot_path = os.path.join("/shared/new", screenshot_name)
+    local_screenshot_path = os.path.join(f"../shared/{run_id}/", screenshot_name)
+    docker_screenshot_path = os.path.join(f"../shared/{run_id}/", screenshot_name)
 
     grab(local_screenshot_path)
 
@@ -57,10 +58,10 @@ def grabAndSolvePuzzle():
     time.sleep(5)
 
 
-def tryPassAdv():
+def tryPassAdv(run_id, step, attempt):
     # check that we passed ad hell
-    local_screenshot_path_ad = "../shared/adck.png"
-    docker_screenshot_path_ad = "/shared/adck.png"
+    local_screenshot_path_ad = f"../shared/{run_id}/{step}-{attempt}-adck.png"
+    docker_screenshot_path_ad = f"/shared/{run_id}/{step}-{attempt}-adck.png"
     grab(local_screenshot_path_ad)
     octave_command_ac = f'docker exec -t eye octave step_adcheck.m "{docker_screenshot_path_ad}" /shared/ad_check.txt 0'
     subprocess.run(octave_command_ac, shell=True, check=True)
@@ -75,15 +76,26 @@ def tryPassAdv():
     # Return true if this is the blue button that completes the advertisement loop
     return (command.commandName == 'bluenext')
 
-solverErrorsInRow=0
-while (solverErrorsInRow < 3):
-    try:
-        grabAndSolvePuzzle()
-        solverErrorsInRow=0
-    except:
-        solverErrorsInRow=solverErrorsInRow+1
 
-    end_time = time.time() + 120 - solverErrorsInRow * 30
-    while(False == tryPassAdv() and end_time > time.time()):
+solver_errors_in_row=0
+step=1
+run_id = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+# Create the folder if it does not exist
+if not os.path.exists(f"../shared/{run_id}/"):
+    os.makedirs(f"../shared/{run_id}/")
+
+while (solver_errors_in_row < 3):
+    try:
+        grabAndSolvePuzzle(run_id,step)
+        solver_errors_in_row=0
+    except:
+        solver_errors_in_row = solver_errors_in_row+1
+
+    end_time = time.time() + 120 - solver_errors_in_row * 30
+    attempt = 1
+    while(False == tryPassAdv(run_id, step, attempt) and end_time > time.time()):
         time.sleep(0.3)
+        attempt = attempt+1
     time.sleep(1.5)
+    step = step+1
