@@ -9,7 +9,7 @@ if nargin == 3
     resultFilename = arg_list{2};
     plotOn = arg_list{3} == "1";
 else
-    imageFilenameA = '../../shared/test_data/cut_scenes/ad_trans_arrow7.png';
+    imageFilenameA = '../../shared/test_data/cut_scenes/ad_trans_x11.png';
     resultFilename = 'adv_check.txt';
     plotOn = true;
 end
@@ -48,12 +48,12 @@ XA_white = rgb2gray(XA) > 180; # Old method, works with white on black
 XA_black = rgb2gray(XA) < 60;
 XAbingrad = binGradX(XA, 20); # new method to detect white on white using gradient
 
-[val_x1, r_x1, c_x1] = symbolMaxInRoi(XA_white, T_x1, 10, 1, 250, size(XA_white,2));
-[val_x2, r_x2, c_x2] = symbolMaxInRoi(XA_white, T_x2, 10, 1, 250, size(XA_white,2));
-[val_xb1, r_xb1, c_xb1] = symbolMaxInRoi(XA_black, T_x1, 10, 1, 250, size(XA_white,2));
-[val_xb2, r_xb2, c_xb2] = symbolMaxInRoi(XA_black, T_x2, 10, 1, 250, size(XA_white,2));
-[val_x3, r_x3, c_x3] = symbolMaxInRoi(XAbingrad, T_x3g, 10, 500, 250, size(XA_white,2));
-[val_x4, r_x4, c_x4] = symbolMaxInRoi(XAbingrad, T_x4g, 100, 50, 250, size(XA_white,2));
+[val_x1, r_x1, c_x1] = symbolMaxInRoi(XA_white, T_x1, 10, 1, 350, size(XA_white,2));
+[val_x2, r_x2, c_x2] = symbolMaxInRoi(XA_white, T_x2, 10, 1, 350, size(XA_white,2));
+[val_xb1, r_xb1, c_xb1] = symbolMaxInRoi(XA_black, T_x1, 10, 1, 350, size(XA_white,2));
+[val_xb2, r_xb2, c_xb2] = symbolMaxInRoi(XA_black, T_x2, 10, 1, 350, size(XA_white,2));
+[val_x3, r_x3, c_x3] = symbolMaxInRoi(XAbingrad, T_x3g, 10, 500, 350, size(XA_white,2));
+[val_x4, r_x4, c_x4] = symbolMaxInRoi(XAbingrad, T_x4g, 100, 50, 350, size(XA_white,2));
 
 [val_a1, r_a1, c_a1] = symbolMaxInRoi(XA_white, T_a1, 50, 1, 250, size(XA_white,2));
 [val_a2, r_a2, c_a2] = symbolMaxInRoi(XA_white, T_a2, 50, 1, 250, size(XA_white,2));
@@ -78,25 +78,25 @@ end
 
 fid = fopen (resultFilename, "w");
 
-if (val_x1 > 0.99)
+if (val_x1 > 0.75)
   saveHit2(fid, "adv_next", r_x1, c_x1);
-elseif (val_x2 > 0.85 )
+elseif (val_x2 > 0.55 )
   saveHit2(fid, "adv_next", r_x2, c_x2);
-elseif (val_xb1 > 0.80 )
+elseif (val_xb1 > 0.75 )
   saveHit2(fid, "adv_next", r_xb2, c_xb2);
-elseif (val_xb2 > 0.80 )
+elseif (val_xb2 > 0.75 )
   saveHit2(fid, "adv_next", r_xb2, c_xb2);
-elseif (val_x3 > 0.78 )
+elseif (val_x3 > 0.75 )
   saveHit2(fid, "adv_next", r_x3, c_x3);
-elseif (val_x4 > 0.80 )
+elseif (val_x4 > 0.75 )
   saveHit2(fid, "adv_next", r_x4, c_x4);
-elseif (val_a1 > 0.95 )
+elseif (val_a1 > 0.75 )
   saveHit2(fid, "adv_next", r_a1, c_a1);
-elseif (val_a2 > 0.90 )
+elseif (val_a2 > 0.75 )
   saveHit2(fid, "adv_next", r_a2, c_a2);
-elseif (val_a3 > 0.80 )
+elseif (val_a3 > 0.75 )
   saveHit2(fid, "adv_next", r_a3, c_a3);
-elseif (val_a4 > 0.80 )
+elseif (val_a4 > 0.75 )
   saveHit2(fid, "adv_next", r_a4, c_a4);
 elseif (pksBN >= 1 )
   disp("We have next level blue button");

@@ -17,7 +17,7 @@ def adbClick(x,y):
 def grabAndSolvePuzzle(run_id, step):
 
     # Create the ID as a string
-    screenshot_name = f"{step}-crsmth.png"
+    screenshot_name = f"{step:03d}-crsmth.png"
 
     # Transfer the screenshot to the local computer
     local_screenshot_path = os.path.join(f"../shared/{run_id}/", screenshot_name)
@@ -51,30 +51,35 @@ def grabAndSolvePuzzle(run_id, step):
     os.remove("../shared/results/x.swipe")
 
     # Click submit result, continue
-    time.sleep(0.5)
+    time.sleep(1)
     subprocess.run('adb shell input tap 750 1280', shell=True, check=True)
     time.sleep(10)
     subprocess.run('adb shell input tap 530 1890', shell=True, check=True)
-    time.sleep(5)
+    time.sleep(6)
 
 
 def tryPassAdv(run_id, step, attempt):
     # check that we passed ad hell
-    local_screenshot_path_ad = f"../shared/{run_id}/{step}-{attempt}-adck.png"
-    docker_screenshot_path_ad = f"/shared/{run_id}/{step}-{attempt}-adck.png"
-    grab(local_screenshot_path_ad)
-    octave_command_ac = f'docker exec -t eye octave step_adcheck.m "{docker_screenshot_path_ad}" /shared/ad_check.txt 0'
-    subprocess.run(octave_command_ac, shell=True, check=True)
-    command = Command.Command.CreateCommandFromOctaveFile('../shared/ad_check.txt')
+    command = getCommandFromImage(run_id, step, attempt)
     
     if (command.commandName == "none"):
         return False # We are not done
-    
+     
     # If command not none, send click.
     adbClick(command.tabPosition[1], command.tabPosition[0])
 
     # Return true if this is the blue button that completes the advertisement loop
     return (command.commandName == 'bluenext')
+
+def getCommandFromImage(run_id, step, attempt):
+    local_screenshot_path_ad = f"../shared/{run_id}/{step:03d}-{attempt}-adck.png"
+    docker_screenshot_path_ad = f"/shared/{run_id}/{step:03d}-{attempt}-adck.png"
+    grab(local_screenshot_path_ad)
+    octave_command_ac = f'docker exec -t eye octave step_adcheck.m "{docker_screenshot_path_ad}" /shared/ad_check.txt 0'
+    subprocess.run(octave_command_ac, shell=True, check=True)
+    command = Command.Command.CreateCommandFromOctaveFile('../shared/ad_check.txt')
+    os.remove('../shared/ad_check.txt')
+    return command
 
 
 solver_errors_in_row=0
@@ -94,8 +99,8 @@ while (solver_errors_in_row < 3):
 
     end_time = time.time() + 120 - solver_errors_in_row * 30
     attempt = 1
+    step = step+1
     while(False == tryPassAdv(run_id, step, attempt) and end_time > time.time()):
         time.sleep(0.3)
         attempt = attempt+1
     time.sleep(1.5)
-    step = step+1

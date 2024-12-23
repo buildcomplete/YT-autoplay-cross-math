@@ -10,16 +10,21 @@ expectations = {
     'ad_trans_arrow5.png': ("adv_next", (150, 1023)),
     'ad_trans_arrow6.png': ("adv_next", (150, 1023)),
     'ad_trans_arrow7.png': ("adv_next", (156, 80)),
+    'ad_trans_arrow8.png': ("adv_next", (150, 1023)),
     'ad_trans_x.png': ("adv_next", (150, 1000)),
     'ad_trans_x2.png': ("adv_next", (156, 80)),
     'ad_trans_x3.png': ("adv_next", (179, 981)),
-    'ad_trans_x4.png': ("adv_next", (177, 979)),
+    'ad_trans_x4.png': ("adv_next", (68, 1013)),  # Two crosses, (177, 979), (68, 1013)
     'ad_trans_x5.png': ("adv_next", (177, 979)),
     'ad_trans_x6.png': ("adv_next", (144, 1015)),
     'ad_trans_x7.png': ("adv_next", (170, 90)),
     'ad_trans_x8.png': ("adv_next", (39, 39)),
     'ad_trans_x9.png': ("adv_next", (142, 1020)),
+    'ad_trans_x10.png': ("adv_next", (140, 63)),
+    'ad_trans_x11.png': ("adv_next", (314, 1008)),
+    'ad_trans_x12.png': ("adv_next", (314, 1008)),
     'nothing.png': ("none",(0,0)),
+    'nothing2.png': ("none",(0,0)),
     'complte_next.png': ("bluenext", (1972, 540)),
 }
 
