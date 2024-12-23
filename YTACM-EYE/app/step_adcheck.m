@@ -9,7 +9,7 @@ if nargin == 3
     resultFilename = arg_list{2};
     plotOn = arg_list{3} == "1";
 else
-    imageFilenameA = '../../shared/test_data/cut_scenes/ad_trans_x11.png';
+    imageFilenameA = '../../shared/test_data/cut_scenes/ad_trans_x13.png';
     resultFilename = 'adv_check.txt';
     plotOn = true;
 end
@@ -80,7 +80,7 @@ fid = fopen (resultFilename, "w");
 
 if (val_x1 > 0.75)
   saveHit2(fid, "adv_next", r_x1, c_x1);
-elseif (val_x2 > 0.55 )
+elseif (val_x2 > 0.75 )
   saveHit2(fid, "adv_next", r_x2, c_x2);
 elseif (val_xb1 > 0.75 )
   saveHit2(fid, "adv_next", r_xb2, c_xb2);
